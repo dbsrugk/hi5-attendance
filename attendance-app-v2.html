@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#c0392b" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="HI5 출결" />
+<title>HI5 출결 체크</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #f5f5f5;
+    color: #1a1a1a;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    min-height: 100vh;
+    box-shadow: 0 0 40px rgba(0,0,0,0.05);
+    position: relative;
+    padding-bottom: 100px;
+  }
+
+  /* 헤더 */
+  .header {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 20px 24px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-box {
+    background: #c0392b;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: -0.5px;
+  }
+  .logo-text {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  .logo-text span {
+    display: block;
+    font-size: 10px;
+    color: #888;
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+  .date-info { text-align: right; }
+  .date-main { font-size: 13px; font-weight: 500; }
+  .date-sub { font-size: 11px; color: #888; margin-top: 2px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #2a2a2a;
+    margin-top: 16px;
+  }
+  .stat { background: #1a1a1a; padding: 12px 8px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 900; line-height: 1; }
+  .stat-num.red { color: #c0392b; }
+  .stat-num.green { color: #27ae60; }
+  .stat-label { font-size: 10px; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
+
+  /* 클래스 탭 */
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid #e8e8e8;
+    background: #fff;
+    position: sticky;
+    top: 145px;
+    z-index: 9;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #888;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: #c0392b;
+    border-bottom-color: #c0392b;
+    font-weight: 700;
+  }
+
+  /* 학생 리스트 */
+  .student-list { padding: 8px 0; }
+  .student {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.15s;
+  }
+  .student:active { background: #fafafa; }
+  .avatar {
+    width: 44px;
+    height: 44px;
+    background: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1a1a1a;
+    margin-right: 14px;
+    flex-shrink: 0;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .student.present .avatar { background: #1a1a1a; color: #fff; }
+  .student.absent .avatar { background: #fff; border-color: #c0392b; color: #c0392b; }
+  .student-info { flex: 1; min-width: 0; }
+  .student-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+  .student-meta { font-size: 11px; color: #888; }
+  .actions { display: flex; gap: 6px; }
+  .btn {
+    width: 44px;
+    height: 36px;
+    border: 1px solid #e8e8e8;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #888;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn.present-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .btn.absent-btn.active { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+  /* 하단 저장 바 */
+  .save-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-top: 1px solid #e8e8e8;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    display: flex;
+    gap: 10px;
+    z-index: 11;
+  }
+  .save-info {
+    flex: 1;
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    align-items: center;
+  }
+  .save-info strong { color: #1a1a1a; margin-right: 4px; }
+  .save-btn {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .save-btn:active { transform: scale(0.97); background: #a02e22; }
+  .save-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+  /* 토스트 */
+  .toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 100;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-left: 3px solid #c0392b;
+    max-width: 90%;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { border-left-color: #c0392b; }
+
+  /* 로딩 */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #888;
+    font-size: 13px;
+  }
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #f0f0f0;
+    border-top-color: #c0392b;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 에러 화면 */
+  .error-screen {
+    padding: 40px 24px;
+    text-align: center;
+    color: #c0392b;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .error-screen strong { display: block; margin-bottom: 8px; font-size: 15px; }
+
+  /* 상태 배지 */
+  .status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #e8f5e9;
+    color: #27ae60;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 3px;
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+  }
+  .status-badge.connecting { background: #fff3e0; color: #f57c00; }
+  .status-badge.error { background: #ffebee; color: #c0392b; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">
+        <div class="logo-box">HI5</div>
+        <div class="logo-text">
+          하이파이브 미술학원
+          <span>CENTUM · BUSAN <span class="status-badge connecting" id="connStatus">연결 중...</span></span>
+        </div>
+      </div>
+      <div class="date-info">
+        <div class="date-main" id="dateMain"></div>
+        <div class="date-sub" id="dateSub"></div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">전체</div></div>
+      <div class="stat"><div class="stat-num green" id="presentCount">0</div><div class="stat-label">출석</div></div>
+      <div class="stat"><div class="stat-num red" id="absentCount">0</div><div class="stat-label">결석</div></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div id="content">
+    <div class="loading"><div class="spinner"></div>학생 명단을 불러오는 중...</div>
+  </div>
+</div>
+
+<div class="save-bar">
+  <div class="save-info"><strong id="changeCount">0</strong>건 변경됨</div>
+  <button class="save-btn" id="saveBtn" disabled>저장하기</button>
+</div>
+
+<div class="toast" id="toast">저장되었습니다</div>
+
+<!-- Supabase 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ============================================
+// 🔧 여기 두 줄만 본인 정보로 바꾸시면 됩니다
+// ============================================
+const SUPABASE_URL = 'https://gbjvkbtvcurgsonynokw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_llBLSGHCsOpdKanjt1v2Eg_aHOzIeJP';
+// ============================================
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let students = [];
+let attendanceMap = {};
+let pendingChanges = {};
+let currentTab = '';
+
+function getTodayKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
+
+function setDate() {
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const now = new Date();
+  document.getElementById('dateMain').textContent = `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
+  document.getElementById('dateSub').textContent = `${now.getFullYear()}년`;
+}
+
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.toggle('error', isError);
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function setConnStatus(status, text) {
+  const badge = document.getElementById('connStatus');
+  badge.className = 'status-badge ' + status;
+  badge.textContent = text;
+}
+
+async function loadData() {
+  try {
+    setConnStatus('connecting', '연결 중...');
+
+    // 1. 학생 명단 가져오기
+    const { data: studentData, error: studentError } = await supabase
+      .from('students')
+      .select('*')
+      .order('class_name')
+      .order('name');
+
+    if (studentError) throw studentError;
+    students = studentData;
+
+    // 2. 오늘 출결 기록 가져오기
+    const today = getTodayKey();
+    const { data: attData, error: attError } = await supabase
+      .from('attendance')
+      .select('*')
+      .eq('date', today);
+
+    if (attError) throw attError;
+
+    attendanceMap = {};
+    attData.forEach(a => { attendanceMap[a.student_id] = a.status; });
+
+    setConnStatus('', '연결됨');
+    renderTabs();
+    renderStudents();
+    updateStats();
+
+  } catch (err) {
+    console.error(err);
+    setConnStatus('error', '연결 오류');
+    document.getElementById('content').innerHTML = `
+      <div class="error-screen">
+        <strong>⚠️ 데이터베이스 연결 실패</strong>
+        Supabase URL과 키가 올바른지 확인해주세요.<br>
+        ${err.message}
+      </div>`;
+  }
+}
+
+function renderTabs() {
+  const classes = [...new Set(students.map(s => s.class_name))];
+  if (!currentTab && classes.length > 0) currentTab = classes[0];
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  classes.forEach(name => {
+    const tab = document.createElement('div');
+    tab.className = 'tab' + (name === currentTab ? ' active' : '');
+    tab.textContent = name;
+    tab.onclick = () => { currentTab = name; renderTabs(); renderStudents(); };
+    tabs.appendChild(tab);
+  });
+}
+
+function renderStudents() {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div class="student-list" id="studentList"></div>';
+  const list = document.getElementById('studentList');
+  const filtered = students.filter(s => s.class_name === currentTab);
+
+  filtered.forEach(s => {
+    const status = pendingChanges.hasOwnProperty(s.id) ? pendingChanges[s.id] : attendanceMap[s.id];
+    const div = document.createElement('div');
+    div.className = 'student' + (status ? ' ' + status : '');
+    div.innerHTML = `
+      <div class="avatar">${s.name.charAt(0)}</div>
+      <div class="student-info">
+        <div class="student-name">${s.name}</div>
+        <div class="student-meta">${s.grade || ''} · ${s.school || ''}</div>
+      </div>
+      <div class="actions">
+        <button class="btn present-btn ${status === 'present' ? 'active' : ''}" data-id="${s.id}" data-action="present">출석</button>
+        <button class="btn absent-btn ${status === 'absent' ? 'active' : ''}" data-id="${s.id}" data-action="absent">결석</button>
+      </div>`;
+    list.appendChild(div);
+  });
+
+  list.querySelectorAll('.btn').forEach(btn => {
+    btn.onclick = () => {
+      const id = parseInt(btn.dataset.id);
+      const action = btn.dataset.action;
+      const current = pendingChanges.hasOwnProperty(id) ? pendingChanges[id] : attendanceMap[id];
+      pendingChanges[id] = (current === action) ? null : action;
+      renderStudents();
+      updateStats();
+      updateSaveButton();
+    };
+  });
+}
+
+function updateStats() {
+  const total = students.length;
+  let present = 0, absent = 0;
+  students.forEach(s => {
+    const status = pendingChanges.hasOwnProperty(s.id) ? pendingChanges[s.id] : attendanceMap[s.id];
+    if (status === 'present') present++;
+    if (status === 'absent') absent++;
+  });
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('presentCount').textContent = present;
+  document.getElementById('absentCount').textContent = absent;
+}
+
+function updateSaveButton() {
+  const count = Object.keys(pendingChanges).length;
+  document.getElementById('changeCount').textContent = count;
+  document.getElementById('saveBtn').disabled = (count === 0);
+}
+
+async function save() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+
+  try {
+    const today = getTodayKey();
+    const upserts = [];
+    const deletes = [];
+
+    Object.entries(pendingChanges).forEach(([id, status]) => {
+      if (status === null) {
+        deletes.push(parseInt(id));
+      } else {
+        upserts.push({ student_id: parseInt(id), date: today, status });
+      }
+    });
+
+    if (upserts.length > 0) {
+      const { error } = await supabase
+        .from('attendance')
+        .upsert(upserts, { onConflict: 'student_id,date' });
+      if (error) throw error;
+    }
+
+    if (deletes.length > 0) {
+      const { error } = await supabase
+        .from('attendance')
+        .delete()
+        .eq('date', today)
+        .in('student_id', deletes);
+      if (error) throw error;
+    }
+
+    // 변경사항을 메인 데이터에 반영
+    Object.entries(pendingChanges).forEach(([id, status]) => {
+      if (status === null) delete attendanceMap[id];
+      else attendanceMap[id] = status;
+    });
+    pendingChanges = {};
+
+    showToast('✓ 저장되었습니다');
+    updateSaveButton();
+    renderStudents();
+
+  } catch (err) {
+    console.error(err);
+    showToast('저장 실패: ' + err.message, true);
+  } finally {
+    btn.textContent = '저장하기';
+    updateSaveButton();
+  }
+}
+
+document.getElementById('saveBtn').onclick = save;
+
+setDate();
+loadData();
+</script>
+</body>
+</html>
