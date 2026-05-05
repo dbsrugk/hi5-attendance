@@ -4,10 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#c0392b" />
+<meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="HI5 출결" />
 <title>HI5 출결 체크</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23c0392b'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='900' font-size='40'%3EH5%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -29,8 +31,6 @@
     position: relative;
     padding-bottom: 100px;
   }
-
-  /* 헤더 */
   .header {
     background: #1a1a1a;
     color: #fff;
@@ -45,11 +45,7 @@
     justify-content: space-between;
     margin-bottom: 12px;
   }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .logo { display: flex; align-items: center; gap: 10px; }
   .logo-box {
     background: #c0392b;
     color: #fff;
@@ -62,22 +58,11 @@
     font-size: 14px;
     letter-spacing: -0.5px;
   }
-  .logo-text {
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-  }
-  .logo-text span {
-    display: block;
-    font-size: 10px;
-    color: #888;
-    font-weight: 400;
-    letter-spacing: 1px;
-  }
+  .logo-text { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
+  .logo-text span { display: block; font-size: 10px; color: #888; font-weight: 400; letter-spacing: 1px; }
   .date-info { text-align: right; }
   .date-main { font-size: 13px; font-weight: 500; }
   .date-sub { font-size: 11px; color: #888; margin-top: 2px; }
-
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -90,8 +75,6 @@
   .stat-num.red { color: #c0392b; }
   .stat-num.green { color: #27ae60; }
   .stat-label { font-size: 10px; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
-
-  /* 클래스 탭 */
   .tabs {
     display: flex;
     border-bottom: 1px solid #e8e8e8;
@@ -114,13 +97,7 @@
     transition: all 0.2s;
     white-space: nowrap;
   }
-  .tab.active {
-    color: #c0392b;
-    border-bottom-color: #c0392b;
-    font-weight: 700;
-  }
-
-  /* 학생 리스트 */
+  .tab.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 700; }
   .student-list { padding: 8px 0; }
   .student {
     display: flex;
@@ -131,18 +108,12 @@
   }
   .student:active { background: #fafafa; }
   .avatar {
-    width: 44px;
-    height: 44px;
+    width: 44px; height: 44px;
     background: #f0f0f0;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 15px;
-    color: #1a1a1a;
-    margin-right: 14px;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: #1a1a1a;
+    margin-right: 14px; flex-shrink: 0;
     border: 2px solid transparent;
     transition: all 0.2s;
   }
@@ -153,13 +124,11 @@
   .student-meta { font-size: 11px; color: #888; }
   .actions { display: flex; gap: 6px; }
   .btn {
-    width: 44px;
-    height: 36px;
+    width: 44px; height: 36px;
     border: 1px solid #e8e8e8;
     background: #fff;
     border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 11px; font-weight: 700;
     cursor: pointer;
     transition: all 0.15s;
     color: #888;
@@ -167,8 +136,6 @@
   .btn:active { transform: scale(0.95); }
   .btn.present-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
   .btn.absent-btn.active { background: #c0392b; color: #fff; border-color: #c0392b; }
-
-  /* 하단 저장 바 */
   .save-bar {
     position: fixed;
     bottom: 0;
@@ -183,21 +150,14 @@
     gap: 10px;
     z-index: 11;
   }
-  .save-info {
-    flex: 1;
-    font-size: 11px;
-    color: #888;
-    display: flex;
-    align-items: center;
-  }
+  .save-info { flex: 1; font-size: 11px; color: #888; display: flex; align-items: center; }
   .save-info strong { color: #1a1a1a; margin-right: 4px; }
   .save-btn {
     background: #c0392b;
     color: #fff;
     border: none;
     padding: 12px 28px;
-    font-weight: 700;
-    font-size: 13px;
+    font-weight: 700; font-size: 13px;
     border-radius: 6px;
     cursor: pointer;
     font-family: inherit;
@@ -205,8 +165,6 @@
   }
   .save-btn:active { transform: scale(0.97); background: #a02e22; }
   .save-btn:disabled { background: #ccc; cursor: not-allowed; }
-
-  /* 토스트 */
   .toast {
     position: fixed;
     top: 30px;
@@ -216,8 +174,7 @@
     color: #fff;
     padding: 12px 24px;
     border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 13px; font-weight: 500;
     z-index: 100;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
@@ -225,20 +182,13 @@
     max-width: 90%;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { border-left-color: #c0392b; }
-
-  /* 로딩 */
   .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 60px 20px;
-    color: #888;
-    font-size: 13px;
+    color: #888; font-size: 13px;
   }
   .spinner {
-    width: 24px;
-    height: 24px;
+    width: 24px; height: 24px;
     border: 3px solid #f0f0f0;
     border-top-color: #c0392b;
     border-radius: 50%;
@@ -246,25 +196,16 @@
     margin-right: 10px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* 에러 화면 */
   .error-screen {
-    padding: 40px 24px;
-    text-align: center;
-    color: #c0392b;
-    font-size: 13px;
-    line-height: 1.6;
+    padding: 40px 24px; text-align: center;
+    color: #c0392b; font-size: 13px; line-height: 1.6;
   }
   .error-screen strong { display: block; margin-bottom: 8px; font-size: 15px; }
-
-  /* 상태 배지 */
   .status-badge {
     display: inline-block;
     padding: 3px 8px;
-    background: #e8f5e9;
-    color: #27ae60;
-    font-size: 10px;
-    font-weight: 700;
+    background: #e8f5e9; color: #27ae60;
+    font-size: 10px; font-weight: 700;
     border-radius: 3px;
     margin-left: 8px;
     letter-spacing: 0.5px;
@@ -295,33 +236,31 @@
       <div class="stat"><div class="stat-num red" id="absentCount">0</div><div class="stat-label">결석</div></div>
     </div>
   </div>
-
   <div class="tabs" id="tabs"></div>
-
   <div id="content">
     <div class="loading"><div class="spinner"></div>학생 명단을 불러오는 중...</div>
   </div>
 </div>
-
 <div class="save-bar">
   <div class="save-info"><strong id="changeCount">0</strong>건 변경됨</div>
   <button class="save-btn" id="saveBtn" disabled>저장하기</button>
 </div>
-
 <div class="toast" id="toast">저장되었습니다</div>
 
-<!-- Supabase 라이브러리 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 // ============================================
-// 🔧 여기 두 줄만 본인 정보로 바꾸시면 됩니다
+// 🔧 Supabase 정보 (이미 입력 완료)
 // ============================================
 const SUPABASE_URL = 'https://gbjvkbtvcurgsonynokw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_llBLSGHCsOpdKanjt1v2Eg_aHOzIeJP';
 // ============================================
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// 라이브러리에서 createClient 함수만 가져오기
+const { createClient } = window.supabase;
+// 데이터베이스 연결 객체 생성 (이름은 'db' 로 사용)
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let students = [];
 let attendanceMap = {};
@@ -343,7 +282,6 @@ function setDate() {
 function showToast(msg, isError = false) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
-  toast.classList.toggle('error', isError);
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
@@ -358,19 +296,17 @@ async function loadData() {
   try {
     setConnStatus('connecting', '연결 중...');
 
-    // 1. 학생 명단 가져오기
-    const { data: studentData, error: studentError } = await supabase
+    const { data: studentData, error: studentError } = await db
       .from('students')
       .select('*')
       .order('class_name')
       .order('name');
 
     if (studentError) throw studentError;
-    students = studentData;
+    students = studentData || [];
 
-    // 2. 오늘 출결 기록 가져오기
     const today = getTodayKey();
-    const { data: attData, error: attError } = await supabase
+    const { data: attData, error: attError } = await db
       .from('attendance')
       .select('*')
       .eq('date', today);
@@ -378,7 +314,7 @@ async function loadData() {
     if (attError) throw attError;
 
     attendanceMap = {};
-    attData.forEach(a => { attendanceMap[a.student_id] = a.status; });
+    (attData || []).forEach(a => { attendanceMap[a.student_id] = a.status; });
 
     setConnStatus('', '연결됨');
     renderTabs();
@@ -392,7 +328,7 @@ async function loadData() {
       <div class="error-screen">
         <strong>⚠️ 데이터베이스 연결 실패</strong>
         Supabase URL과 키가 올바른지 확인해주세요.<br>
-        ${err.message}
+        ${err.message || err}
       </div>`;
   }
 }
@@ -485,22 +421,15 @@ async function save() {
     });
 
     if (upserts.length > 0) {
-      const { error } = await supabase
-        .from('attendance')
-        .upsert(upserts, { onConflict: 'student_id,date' });
+      const { error } = await db.from('attendance').upsert(upserts, { onConflict: 'student_id,date' });
       if (error) throw error;
     }
 
     if (deletes.length > 0) {
-      const { error } = await supabase
-        .from('attendance')
-        .delete()
-        .eq('date', today)
-        .in('student_id', deletes);
+      const { error } = await db.from('attendance').delete().eq('date', today).in('student_id', deletes);
       if (error) throw error;
     }
 
-    // 변경사항을 메인 데이터에 반영
     Object.entries(pendingChanges).forEach(([id, status]) => {
       if (status === null) delete attendanceMap[id];
       else attendanceMap[id] = status;
@@ -513,7 +442,7 @@ async function save() {
 
   } catch (err) {
     console.error(err);
-    showToast('저장 실패: ' + err.message, true);
+    showToast('저장 실패: ' + (err.message || err), true);
   } finally {
     btn.textContent = '저장하기';
     updateSaveButton();
