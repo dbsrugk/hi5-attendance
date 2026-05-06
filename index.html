@@ -15,203 +15,123 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: #f5f5f5;
-    color: #1a1a1a;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  .app {
-    max-width: 480px;
-    margin: 0 auto;
-    background: #ffffff;
-    min-height: 100vh;
-    box-shadow: 0 0 40px rgba(0,0,0,0.05);
-    position: relative;
-    padding-bottom: 100px;
-  }
-  .header {
-    background: #1a1a1a;
-    color: #fff;
-    padding: 20px 24px 24px;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
+  html, body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; overflow-x: hidden; }
+  button { font-family: inherit; cursor: pointer; }
+  input, select { font-family: inherit; }
+  .app { max-width: 480px; margin: 0 auto; background: #ffffff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.05); position: relative; padding-bottom: 100px; }
+  .header { background: #1a1a1a; color: #fff; padding: 20px 24px 24px; position: sticky; top: 0; z-index: 10; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-box {
-    background: #c0392b;
-    color: #fff;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 14px;
-    letter-spacing: -0.5px;
-  }
+  .logo-box { background: #c0392b; color: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; letter-spacing: -0.5px; }
   .logo-text { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
   .logo-text span { display: block; font-size: 10px; color: #888; font-weight: 400; letter-spacing: 1px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
   .date-info { text-align: right; }
   .date-main { font-size: 13px; font-weight: 500; }
   .date-sub { font-size: 11px; color: #888; margin-top: 2px; }
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: #2a2a2a;
-    margin-top: 16px;
-  }
+  .settings-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .settings-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+  .settings-btn svg { width: 18px; height: 18px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #2a2a2a; margin-top: 16px; }
   .stat { background: #1a1a1a; padding: 12px 8px; text-align: center; }
   .stat-num { font-size: 22px; font-weight: 900; line-height: 1; }
   .stat-num.red { color: #c0392b; }
   .stat-num.green { color: #27ae60; }
   .stat-label { font-size: 10px; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
-  .tabs {
-    display: flex;
-    border-bottom: 1px solid #e8e8e8;
-    background: #fff;
-    position: sticky;
-    top: 145px;
-    z-index: 9;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
+  .tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 145px; z-index: 9; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex-shrink: 0;
-    padding: 14px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #888;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
+  .tab { flex-shrink: 0; padding: 14px 20px; font-size: 13px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .tab.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 700; }
   .student-list { padding: 8px 0; }
-  .student {
-    display: flex;
-    align-items: center;
-    padding: 14px 24px;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background 0.15s;
-  }
+  .student { display: flex; align-items: center; padding: 14px 24px; border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
   .student:active { background: #fafafa; }
-  .avatar {
-    width: 44px; height: 44px;
-    background: #f0f0f0;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 15px; color: #1a1a1a;
-    margin-right: 14px; flex-shrink: 0;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-  }
+  .avatar { width: 44px; height: 44px; background: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; color: #1a1a1a; margin-right: 14px; flex-shrink: 0; border: 2px solid transparent; transition: all 0.2s; }
   .student.present .avatar { background: #1a1a1a; color: #fff; }
   .student.absent .avatar { background: #fff; border-color: #c0392b; color: #c0392b; }
   .student-info { flex: 1; min-width: 0; }
   .student-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
   .student-meta { font-size: 11px; color: #888; }
   .actions { display: flex; gap: 6px; }
-  .btn {
-    width: 44px; height: 36px;
-    border: 1px solid #e8e8e8;
-    background: #fff;
-    border-radius: 6px;
-    font-size: 11px; font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-    color: #888;
-  }
+  .btn { width: 44px; height: 36px; border: 1px solid #e8e8e8; background: #fff; border-radius: 6px; font-size: 11px; font-weight: 700; transition: all 0.15s; color: #888; }
   .btn:active { transform: scale(0.95); }
   .btn.present-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
   .btn.absent-btn.active { background: #c0392b; color: #fff; border-color: #c0392b; }
-  .save-bar {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 480px;
-    background: #fff;
-    border-top: 1px solid #e8e8e8;
-    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
-    display: flex;
-    gap: 10px;
-    z-index: 11;
-  }
+  .save-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #fff; border-top: 1px solid #e8e8e8; padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 10px; z-index: 11; }
   .save-info { flex: 1; font-size: 11px; color: #888; display: flex; align-items: center; }
   .save-info strong { color: #1a1a1a; margin-right: 4px; }
-  .save-btn {
-    background: #c0392b;
-    color: #fff;
-    border: none;
-    padding: 12px 28px;
-    font-weight: 700; font-size: 13px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
+  .save-btn { background: #c0392b; color: #fff; border: none; padding: 12px 28px; font-weight: 700; font-size: 13px; border-radius: 6px; transition: all 0.15s; }
   .save-btn:active { transform: scale(0.97); background: #a02e22; }
   .save-btn:disabled { background: #ccc; cursor: not-allowed; }
-  .toast {
-    position: fixed;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-100px);
-    background: #1a1a1a;
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 13px; font-weight: 500;
-    z-index: 100;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    border-left: 3px solid #c0392b;
-    max-width: 90%;
-  }
+  .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 6px; font-size: 13px; font-weight: 500; z-index: 1000; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-left: 3px solid #c0392b; max-width: 90%; }
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .loading {
-    display: flex; align-items: center; justify-content: center;
-    padding: 60px 20px;
-    color: #888; font-size: 13px;
-  }
-  .spinner {
-    width: 24px; height: 24px;
-    border: 3px solid #f0f0f0;
-    border-top-color: #c0392b;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-right: 10px;
-  }
+  .loading { display: flex; align-items: center; justify-content: center; padding: 60px 20px; color: #888; font-size: 13px; }
+  .spinner { width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top-color: #c0392b; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .error-screen {
-    padding: 40px 24px; text-align: center;
-    color: #c0392b; font-size: 13px; line-height: 1.6;
-  }
+  .error-screen { padding: 40px 24px; text-align: center; color: #c0392b; font-size: 13px; line-height: 1.6; }
   .error-screen strong { display: block; margin-bottom: 8px; font-size: 15px; }
-  .status-badge {
-    display: inline-block;
-    padding: 3px 8px;
-    background: #e8f5e9; color: #27ae60;
-    font-size: 10px; font-weight: 700;
-    border-radius: 3px;
-    margin-left: 8px;
-    letter-spacing: 0.5px;
-  }
+  .status-badge { display: inline-block; padding: 3px 8px; background: #e8f5e9; color: #27ae60; font-size: 10px; font-weight: 700; border-radius: 3px; margin-left: 8px; letter-spacing: 0.5px; }
   .status-badge.connecting { background: #fff3e0; color: #f57c00; }
   .status-badge.error { background: #ffebee; color: #c0392b; }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-start; justify-content: center; z-index: 100; overflow-y: auto; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: #fff; width: 100%; max-width: 480px; min-height: 100vh; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { background: #1a1a1a; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5; }
+  .modal-title { font-weight: 700; font-size: 15px; }
+  .modal-close { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; line-height: 1; }
+  .modal-close:active { background: rgba(255,255,255,0.2); }
+  .pwd-screen { text-align: center; padding: 40px 24px; }
+  .pwd-icon { width: 60px; height: 60px; background: #c0392b; color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
+  .pwd-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .pwd-subtitle { font-size: 13px; color: #888; margin-bottom: 30px; }
+  .pwd-input { width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 8px; font-size: 16px; text-align: center; margin-bottom: 12px; transition: border-color 0.2s; }
+  .pwd-input:focus { outline: none; border-color: #c0392b; }
+  .pwd-input.error { border-color: #c0392b; animation: shake 0.4s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .pwd-btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; transition: all 0.15s; }
+  .pwd-btn:active { transform: scale(0.98); }
+  .pwd-error-msg { color: #c0392b; font-size: 12px; margin-top: 8px; min-height: 16px; }
+  .admin-tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 60px; z-index: 4; }
+  .admin-tab { flex: 1; padding: 14px 8px; font-size: 12px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; text-align: center; transition: all 0.2s; }
+  .admin-tab.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 700; }
+  .admin-content { padding: 16px 0 100px; }
+  .admin-section-header { padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+  .admin-section-title { font-size: 12px; font-weight: 700; color: #888; letter-spacing: 0.5px; }
+  .add-btn { background: #c0392b; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .add-btn:active { transform: scale(0.97); }
+  .admin-list-item { padding: 14px 24px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 12px; }
+  .admin-item-info { flex: 1; min-width: 0; }
+  .admin-item-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+  .admin-item-meta { font-size: 11px; color: #888; }
+  .admin-item-actions { display: flex; gap: 6px; }
+  .icon-btn { width: 32px; height: 32px; background: #fff; border: 1px solid #e8e8e8; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #888; transition: all 0.15s; }
+  .icon-btn:active { transform: scale(0.95); }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .icon-btn.danger { color: #c0392b; }
+  .icon-btn.danger:active { background: #ffebee; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .form-input, .form-select { width: 100%; padding: 12px 14px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; }
+  .form-input:focus, .form-select:focus { outline: none; border-color: #c0392b; }
+  .form-buttons { display: flex; gap: 8px; margin-top: 24px; }
+  .form-btn { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #e8e8e8; font-weight: 700; font-size: 13px; background: #fff; color: #888; transition: all 0.15s; }
+  .form-btn:active { transform: scale(0.98); }
+  .form-btn.primary { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .record-controls { padding: 16px 24px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+  .date-input { width: 100%; padding: 10px 12px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; margin-bottom: 8px; }
+  .record-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .summary-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 6px; padding: 10px; text-align: center; }
+  .summary-num { font-size: 18px; font-weight: 900; line-height: 1; }
+  .summary-num.green { color: #27ae60; }
+  .summary-num.red { color: #c0392b; }
+  .summary-num.gray { color: #888; }
+  .summary-label { font-size: 10px; color: #888; margin-top: 4px; }
+  .record-status { display: inline-block; padding: 3px 8px; font-size: 10px; font-weight: 700; border-radius: 3px; }
+  .record-status.present { background: #e8f5e9; color: #27ae60; }
+  .record-status.absent { background: #ffebee; color: #c0392b; }
+  .record-status.none { background: #f0f0f0; color: #888; }
+  .empty-state { padding: 60px 24px; text-align: center; color: #888; font-size: 13px; }
+  .class-header { padding: 8px 24px; background: #fafafa; font-size: 11px; font-weight: 700; color: #c0392b; border-bottom: 1px solid #f0f0f0; }
 </style>
 </head>
 <body>
@@ -220,14 +140,19 @@
     <div class="header-top">
       <div class="logo">
         <div class="logo-box">HI5</div>
-        <div class="logo-text">
-          하이파이브 미술학원
-          <span>CENTUM · BUSAN <span class="status-badge connecting" id="connStatus">연결 중...</span></span>
-        </div>
+        <div class="logo-text">하이파이브 미술학원<span>CENTUM · BUSAN <span class="status-badge connecting" id="connStatus">연결 중...</span></span></div>
       </div>
-      <div class="date-info">
-        <div class="date-main" id="dateMain"></div>
-        <div class="date-sub" id="dateSub"></div>
+      <div class="header-right">
+        <div class="date-info">
+          <div class="date-main" id="dateMain"></div>
+          <div class="date-sub" id="dateSub"></div>
+        </div>
+        <button class="settings-btn" id="settingsBtn" title="관리자">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
       </div>
     </div>
     <div class="stats">
@@ -237,81 +162,79 @@
     </div>
   </div>
   <div class="tabs" id="tabs"></div>
-  <div id="content">
-    <div class="loading"><div class="spinner"></div>학생 명단을 불러오는 중...</div>
-  </div>
+  <div id="content"><div class="loading"><div class="spinner"></div>학생 명단을 불러오는 중...</div></div>
 </div>
+
 <div class="save-bar">
   <div class="save-info"><strong id="changeCount">0</strong>건 변경됨</div>
   <button class="save-btn" id="saveBtn" disabled>저장하기</button>
 </div>
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="adminModalTitle">관리자</div>
+      <button class="modal-close" id="adminModalClose">×</button>
+    </div>
+    <div id="adminBody"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast">저장되었습니다</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ============================================
-// 🔧 Supabase 정보 (이미 입력 완료)
-// ============================================
 const SUPABASE_URL = 'https://gbjvkbtvcurgsonynokw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_llBLSGHCsOpdKanjt1v2Eg_aHOzIeJP';
-// ============================================
+const ADMIN_PASSWORD = 'hi5centum';
 
-// 라이브러리에서 createClient 함수만 가져오기
 const { createClient } = window.supabase;
-// 데이터베이스 연결 객체 생성 (이름은 'db' 로 사용)
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let students = [];
 let attendanceMap = {};
 let pendingChanges = {};
 let currentTab = '';
+let isAdminAuth = false;
+let currentAdminTab = 'students';
 
 function getTodayKey() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 }
-
 function setDate() {
-  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const days = ['일','월','화','수','목','금','토'];
   const now = new Date();
   document.getElementById('dateMain').textContent = `${now.getMonth()+1}월 ${now.getDate()}일 (${days[now.getDay()]})`;
   document.getElementById('dateSub').textContent = `${now.getFullYear()}년`;
 }
-
-function showToast(msg, isError = false) {
+function showToast(msg) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
-
 function setConnStatus(status, text) {
   const badge = document.getElementById('connStatus');
   badge.className = 'status-badge ' + status;
   badge.textContent = text;
 }
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
 async function loadData() {
   try {
     setConnStatus('connecting', '연결 중...');
-
-    const { data: studentData, error: studentError } = await db
-      .from('students')
-      .select('*')
-      .order('class_name')
-      .order('name');
-
-    if (studentError) throw studentError;
+    const { data: studentData, error: e1 } = await db.from('students').select('*').order('class_name').order('name');
+    if (e1) throw e1;
     students = studentData || [];
 
     const today = getTodayKey();
-    const { data: attData, error: attError } = await db
-      .from('attendance')
-      .select('*')
-      .eq('date', today);
-
-    if (attError) throw attError;
+    const { data: attData, error: e2 } = await db.from('attendance').select('*').eq('date', today);
+    if (e2) throw e2;
 
     attendanceMap = {};
     (attData || []).forEach(a => { attendanceMap[a.student_id] = a.status; });
@@ -320,22 +243,17 @@ async function loadData() {
     renderTabs();
     renderStudents();
     updateStats();
-
   } catch (err) {
     console.error(err);
     setConnStatus('error', '연결 오류');
-    document.getElementById('content').innerHTML = `
-      <div class="error-screen">
-        <strong>⚠️ 데이터베이스 연결 실패</strong>
-        Supabase URL과 키가 올바른지 확인해주세요.<br>
-        ${err.message || err}
-      </div>`;
+    document.getElementById('content').innerHTML = `<div class="error-screen"><strong>⚠️ 데이터베이스 연결 실패</strong>${escapeHtml(err.message || err)}</div>`;
   }
 }
 
 function renderTabs() {
   const classes = [...new Set(students.map(s => s.class_name))];
   if (!currentTab && classes.length > 0) currentTab = classes[0];
+  if (currentTab && !classes.includes(currentTab) && classes.length > 0) currentTab = classes[0];
   const tabs = document.getElementById('tabs');
   tabs.innerHTML = '';
   classes.forEach(name => {
@@ -349,19 +267,24 @@ function renderTabs() {
 
 function renderStudents() {
   const content = document.getElementById('content');
+  if (students.length === 0) {
+    content.innerHTML = '<div class="empty-state">등록된 학생이 없습니다.<br>설정 ⚙️ 에서 학생을 추가해주세요.</div>';
+    return;
+  }
   content.innerHTML = '<div class="student-list" id="studentList"></div>';
   const list = document.getElementById('studentList');
   const filtered = students.filter(s => s.class_name === currentTab);
+  if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">이 반에 학생이 없습니다.</div>'; return; }
 
   filtered.forEach(s => {
     const status = pendingChanges.hasOwnProperty(s.id) ? pendingChanges[s.id] : attendanceMap[s.id];
     const div = document.createElement('div');
     div.className = 'student' + (status ? ' ' + status : '');
     div.innerHTML = `
-      <div class="avatar">${s.name.charAt(0)}</div>
+      <div class="avatar">${escapeHtml(s.name.charAt(0))}</div>
       <div class="student-info">
-        <div class="student-name">${s.name}</div>
-        <div class="student-meta">${s.grade || ''} · ${s.school || ''}</div>
+        <div class="student-name">${escapeHtml(s.name)}</div>
+        <div class="student-meta">${escapeHtml(s.grade || '')} ${s.school ? '· '+escapeHtml(s.school) : ''}</div>
       </div>
       <div class="actions">
         <button class="btn present-btn ${status === 'present' ? 'active' : ''}" data-id="${s.id}" data-action="present">출석</button>
@@ -406,50 +329,349 @@ async function save() {
   const btn = document.getElementById('saveBtn');
   btn.disabled = true;
   btn.textContent = '저장 중...';
-
   try {
     const today = getTodayKey();
     const upserts = [];
     const deletes = [];
-
     Object.entries(pendingChanges).forEach(([id, status]) => {
-      if (status === null) {
-        deletes.push(parseInt(id));
-      } else {
-        upserts.push({ student_id: parseInt(id), date: today, status });
-      }
+      if (status === null) deletes.push(parseInt(id));
+      else upserts.push({ student_id: parseInt(id), date: today, status });
     });
-
     if (upserts.length > 0) {
       const { error } = await db.from('attendance').upsert(upserts, { onConflict: 'student_id,date' });
       if (error) throw error;
     }
-
     if (deletes.length > 0) {
       const { error } = await db.from('attendance').delete().eq('date', today).in('student_id', deletes);
       if (error) throw error;
     }
-
     Object.entries(pendingChanges).forEach(([id, status]) => {
       if (status === null) delete attendanceMap[id];
       else attendanceMap[id] = status;
     });
     pendingChanges = {};
-
     showToast('✓ 저장되었습니다');
-    updateSaveButton();
-    renderStudents();
-
   } catch (err) {
     console.error(err);
-    showToast('저장 실패: ' + (err.message || err), true);
+    showToast('저장 실패: ' + (err.message || err));
   } finally {
     btn.textContent = '저장하기';
     updateSaveButton();
+    renderStudents();
+  }
+}
+document.getElementById('saveBtn').onclick = save;
+
+// ============ 관리자 ============
+const adminModal = document.getElementById('adminModal');
+const adminBody = document.getElementById('adminBody');
+const adminTitle = document.getElementById('adminModalTitle');
+
+document.getElementById('settingsBtn').onclick = openAdminModal;
+document.getElementById('adminModalClose').onclick = closeAdminModal;
+
+function openAdminModal() {
+  adminModal.classList.add('show');
+  if (isAdminAuth) renderAdminPanel();
+  else renderPasswordScreen();
+}
+function closeAdminModal() {
+  adminModal.classList.remove('show');
+}
+
+function renderPasswordScreen() {
+  adminTitle.textContent = '관리자 로그인';
+  adminBody.innerHTML = `
+    <div class="pwd-screen">
+      <div class="pwd-icon">🔒</div>
+      <div class="pwd-title">관리자 인증</div>
+      <div class="pwd-subtitle">비밀번호를 입력해주세요</div>
+      <input type="password" class="pwd-input" id="pwdInput" placeholder="비밀번호" autocomplete="off" />
+      <div class="pwd-error-msg" id="pwdErrorMsg"></div>
+      <button class="pwd-btn" id="pwdSubmit">확인</button>
+    </div>`;
+  const input = document.getElementById('pwdInput');
+  const submit = document.getElementById('pwdSubmit');
+  const errMsg = document.getElementById('pwdErrorMsg');
+  setTimeout(() => input.focus(), 100);
+  function tryAuth() {
+    if (input.value === ADMIN_PASSWORD) {
+      isAdminAuth = true;
+      renderAdminPanel();
+    } else {
+      input.classList.add('error');
+      errMsg.textContent = '비밀번호가 틀렸습니다';
+      setTimeout(() => input.classList.remove('error'), 500);
+      input.value = '';
+      input.focus();
+    }
+  }
+  submit.onclick = tryAuth;
+  input.onkeydown = (e) => { if (e.key === 'Enter') tryAuth(); };
+}
+
+function renderAdminPanel() {
+  adminTitle.textContent = '관리자 페이지';
+  adminBody.innerHTML = `
+    <div class="admin-tabs">
+      <div class="admin-tab ${currentAdminTab==='students'?'active':''}" data-tab="students">학생 관리</div>
+      <div class="admin-tab ${currentAdminTab==='classes'?'active':''}" data-tab="classes">반 관리</div>
+      <div class="admin-tab ${currentAdminTab==='records'?'active':''}" data-tab="records">출결 기록</div>
+    </div>
+    <div class="admin-content" id="adminContent"></div>`;
+  document.querySelectorAll('.admin-tab').forEach(t => {
+    t.onclick = () => { currentAdminTab = t.dataset.tab; renderAdminPanel(); };
+  });
+  if (currentAdminTab === 'students') renderStudentManager();
+  else if (currentAdminTab === 'classes') renderClassManager();
+  else if (currentAdminTab === 'records') renderRecordViewer();
+}
+
+function renderStudentManager() {
+  const content = document.getElementById('adminContent');
+  const classes = [...new Set(students.map(s => s.class_name))];
+  let html = `
+    <div class="admin-section-header">
+      <div class="admin-section-title">전체 학생 (${students.length}명)</div>
+      <button class="add-btn" id="addStudentBtn">+ 학생 추가</button>
+    </div>`;
+  if (students.length === 0) {
+    html += '<div class="empty-state">학생이 없습니다.<br>+ 학생 추가 버튼을 눌러주세요.</div>';
+  } else {
+    classes.forEach(cls => {
+      const clsStudents = students.filter(s => s.class_name === cls);
+      html += `<div class="class-header">${escapeHtml(cls)} (${clsStudents.length}명)</div>`;
+      clsStudents.forEach(s => {
+        html += `
+          <div class="admin-list-item">
+            <div class="avatar" style="width:36px;height:36px;font-size:13px;">${escapeHtml(s.name.charAt(0))}</div>
+            <div class="admin-item-info">
+              <div class="admin-item-name">${escapeHtml(s.name)}</div>
+              <div class="admin-item-meta">${escapeHtml(s.grade || '')} ${s.school ? '· '+escapeHtml(s.school) : ''}</div>
+            </div>
+            <div class="admin-item-actions">
+              <button class="icon-btn" data-action="edit" data-id="${s.id}" title="수정">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="icon-btn danger" data-action="delete" data-id="${s.id}" title="삭제">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+              </button>
+            </div>
+          </div>`;
+      });
+    });
+  }
+  content.innerHTML = html;
+  document.getElementById('addStudentBtn').onclick = () => showStudentForm();
+  content.querySelectorAll('[data-action]').forEach(btn => {
+    btn.onclick = () => {
+      const id = parseInt(btn.dataset.id);
+      const action = btn.dataset.action;
+      const student = students.find(s => s.id === id);
+      if (action === 'edit') showStudentForm(student);
+      else if (action === 'delete') deleteStudent(student);
+    };
+  });
+}
+
+function showStudentForm(student = null) {
+  const isEdit = !!student;
+  const classes = [...new Set(students.map(s => s.class_name))];
+  const content = document.getElementById('adminContent');
+  content.innerHTML = `
+    <div style="padding:24px;">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px;">${isEdit ? '학생 수정' : '학생 추가'}</div>
+      <div class="form-group">
+        <label class="form-label">이름 *</label>
+        <input type="text" class="form-input" id="fName" value="${student ? escapeHtml(student.name) : ''}" placeholder="학생 이름" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">반 *</label>
+        <select class="form-select" id="fClass">
+          ${classes.length === 0 ? '' : classes.map(c => `<option value="${escapeHtml(c)}" ${student && student.class_name === c ? 'selected':''}>${escapeHtml(c)}</option>`).join('')}
+          <option value="__new__">+ 새 반 만들기</option>
+        </select>
+        <input type="text" class="form-input" id="fNewClass" placeholder="새 반 이름" style="display:${classes.length === 0 ? 'block' : 'none'};margin-top:8px;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">학년</label>
+        <input type="text" class="form-input" id="fGrade" value="${student ? escapeHtml(student.grade || '') : ''}" placeholder="예: 고3" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">학교</label>
+        <input type="text" class="form-input" id="fSchool" value="${student ? escapeHtml(student.school || '') : ''}" placeholder="예: 센텀고" />
+      </div>
+      <div class="form-buttons">
+        <button class="form-btn" id="fCancel">취소</button>
+        <button class="form-btn primary" id="fSave">${isEdit ? '수정' : '추가'}</button>
+      </div>
+    </div>`;
+  const classSelect = document.getElementById('fClass');
+  const newClassInput = document.getElementById('fNewClass');
+  if (classes.length === 0) {
+    classSelect.value = '__new__';
+  }
+  classSelect.onchange = () => {
+    if (classSelect.value === '__new__') {
+      newClassInput.style.display = 'block';
+      newClassInput.focus();
+    } else {
+      newClassInput.style.display = 'none';
+    }
+  };
+  document.getElementById('fCancel').onclick = renderStudentManager;
+  document.getElementById('fSave').onclick = async () => {
+    const name = document.getElementById('fName').value.trim();
+    let className = classSelect.value;
+    if (className === '__new__') className = newClassInput.value.trim();
+    const grade = document.getElementById('fGrade').value.trim();
+    const school = document.getElementById('fSchool').value.trim();
+    if (!name) { showToast('이름을 입력해주세요'); return; }
+    if (!className) { showToast('반을 선택해주세요'); return; }
+    try {
+      if (isEdit) {
+        const { error } = await db.from('students').update({ name, class_name: className, grade, school }).eq('id', student.id);
+        if (error) throw error;
+        showToast('✓ 수정되었습니다');
+      } else {
+        const { error } = await db.from('students').insert({ name, class_name: className, grade, school });
+        if (error) throw error;
+        showToast('✓ 추가되었습니다');
+      }
+      await loadData();
+      renderStudentManager();
+    } catch (err) {
+      console.error(err);
+      showToast('실패: ' + (err.message || err));
+    }
+  };
+}
+
+async function deleteStudent(student) {
+  if (!confirm(`'${student.name}' 학생을 삭제하시겠습니까?\n관련 출결 기록도 모두 삭제됩니다.`)) return;
+  try {
+    const { error } = await db.from('students').delete().eq('id', student.id);
+    if (error) throw error;
+    showToast('✓ 삭제되었습니다');
+    await loadData();
+    renderStudentManager();
+  } catch (err) {
+    console.error(err);
+    showToast('삭제 실패: ' + (err.message || err));
   }
 }
 
-document.getElementById('saveBtn').onclick = save;
+function renderClassManager() {
+  const content = document.getElementById('adminContent');
+  const classes = [...new Set(students.map(s => s.class_name))];
+  let html = `<div class="admin-section-header"><div class="admin-section-title">전체 반 (${classes.length}개)</div></div>`;
+  if (classes.length === 0) {
+    html += '<div class="empty-state">아직 반이 없습니다.<br>학생을 추가하면 반이 자동 생성됩니다.</div>';
+  } else {
+    classes.forEach(cls => {
+      const count = students.filter(s => s.class_name === cls).length;
+      html += `
+        <div class="admin-list-item">
+          <div class="admin-item-info">
+            <div class="admin-item-name">${escapeHtml(cls)}</div>
+            <div class="admin-item-meta">학생 ${count}명</div>
+          </div>
+          <div class="admin-item-actions">
+            <button class="icon-btn" data-action="rename" data-class="${escapeHtml(cls)}" title="이름 변경">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+          </div>
+        </div>`;
+    });
+  }
+  html += `<div style="padding:24px;"><div style="font-size:13px;color:#888;margin-bottom:8px;">💡 팁</div><div style="font-size:12px;color:#666;line-height:1.6;">새 반은 [학생 관리]에서 학생을 추가할 때 자동으로 생성됩니다.</div></div>`;
+  content.innerHTML = html;
+  content.querySelectorAll('[data-action="rename"]').forEach(btn => {
+    btn.onclick = () => renameClass(btn.dataset.class);
+  });
+}
+
+async function renameClass(oldName) {
+  const newName = prompt(`'${oldName}' 의 새 이름을 입력하세요:`, oldName);
+  if (!newName || newName === oldName) return;
+  if (!newName.trim()) { showToast('이름을 입력해주세요'); return; }
+  try {
+    const { error } = await db.from('students').update({ class_name: newName.trim() }).eq('class_name', oldName);
+    if (error) throw error;
+    showToast('✓ 반 이름이 변경되었습니다');
+    if (currentTab === oldName) currentTab = newName.trim();
+    await loadData();
+    renderClassManager();
+  } catch (err) {
+    console.error(err);
+    showToast('변경 실패: ' + (err.message || err));
+  }
+}
+
+async function renderRecordViewer() {
+  const content = document.getElementById('adminContent');
+  const today = getTodayKey();
+  content.innerHTML = `
+    <div class="record-controls">
+      <label class="form-label">날짜 선택</label>
+      <input type="date" class="date-input" id="recordDate" value="${today}" />
+      <div class="record-summary" id="recordSummary"></div>
+    </div>
+    <div id="recordList"><div class="loading"><div class="spinner"></div>불러오는 중...</div></div>`;
+  const dateInput = document.getElementById('recordDate');
+  dateInput.onchange = () => loadRecords(dateInput.value);
+  loadRecords(today);
+}
+
+async function loadRecords(date) {
+  const summary = document.getElementById('recordSummary');
+  const list = document.getElementById('recordList');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div>불러오는 중...</div>';
+  try {
+    const { data: records, error } = await db.from('attendance').select('*').eq('date', date);
+    if (error) throw error;
+    const recordMap = {};
+    (records || []).forEach(r => { recordMap[r.student_id] = r.status; });
+    let present = 0, absent = 0, none = 0;
+    students.forEach(s => {
+      const status = recordMap[s.id];
+      if (status === 'present') present++;
+      else if (status === 'absent') absent++;
+      else none++;
+    });
+    summary.innerHTML = `
+      <div class="summary-card"><div class="summary-num green">${present}</div><div class="summary-label">출석</div></div>
+      <div class="summary-card"><div class="summary-num red">${absent}</div><div class="summary-label">결석</div></div>
+      <div class="summary-card"><div class="summary-num gray">${none}</div><div class="summary-label">미체크</div></div>`;
+    if (students.length === 0) {
+      list.innerHTML = '<div class="empty-state">학생이 없습니다.</div>';
+      return;
+    }
+    const classes = [...new Set(students.map(s => s.class_name))];
+    let html = '';
+    classes.forEach(cls => {
+      const clsStudents = students.filter(s => s.class_name === cls);
+      html += `<div class="class-header">${escapeHtml(cls)}</div>`;
+      clsStudents.forEach(s => {
+        const status = recordMap[s.id];
+        const statusHtml = status === 'present' ? '<span class="record-status present">출석</span>' : status === 'absent' ? '<span class="record-status absent">결석</span>' : '<span class="record-status none">미체크</span>';
+        html += `
+          <div class="admin-list-item">
+            <div class="avatar" style="width:36px;height:36px;font-size:13px;">${escapeHtml(s.name.charAt(0))}</div>
+            <div class="admin-item-info">
+              <div class="admin-item-name">${escapeHtml(s.name)}</div>
+              <div class="admin-item-meta">${escapeHtml(s.grade || '')} ${s.school ? '· '+escapeHtml(s.school) : ''}</div>
+            </div>
+            <div>${statusHtml}</div>
+          </div>`;
+      });
+    });
+    list.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    list.innerHTML = `<div class="error-screen"><strong>⚠️ 불러오기 실패</strong>${escapeHtml(err.message || err)}</div>`;
+  }
+}
 
 setDate();
 loadData();
