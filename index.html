@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="HI5 출결" />
-<title>HI5 출결 체크</title>
+<title>HI5 출결 & 갤러리</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23c0392b'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='900' font-size='40'%3EH5%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,31 +17,38 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { font-family: 'Noto Sans KR', sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; overflow-x: hidden; }
   button { font-family: inherit; cursor: pointer; }
-  input, select { font-family: inherit; }
+  input, select, textarea { font-family: inherit; }
   .app { max-width: 480px; margin: 0 auto; background: #ffffff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.05); position: relative; padding-bottom: 100px; }
+  .app.no-savebar { padding-bottom: 0; }
   .header { background: #1a1a1a; color: #fff; padding: 20px 24px 24px; position: sticky; top: 0; z-index: 10; }
   .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .logo { display: flex; align-items: center; gap: 10px; }
   .logo-box { background: #c0392b; color: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; letter-spacing: -0.5px; }
   .logo-text { font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
   .logo-text span { display: block; font-size: 10px; color: #888; font-weight: 400; letter-spacing: 1px; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .date-info { text-align: right; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .date-info { text-align: right; margin-right: 4px; }
   .date-main { font-size: 13px; font-weight: 500; }
   .date-sub { font-size: 11px; color: #888; margin-top: 2px; }
-  .settings-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .settings-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
-  .settings-btn svg { width: 18px; height: 18px; }
+  .icon-header-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; position: relative; }
+  .icon-header-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+  .icon-header-btn svg { width: 17px; height: 17px; }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #2a2a2a; margin-top: 16px; }
   .stat { background: #1a1a1a; padding: 12px 8px; text-align: center; }
   .stat-num { font-size: 22px; font-weight: 900; line-height: 1; }
   .stat-num.red { color: #c0392b; }
   .stat-num.green { color: #27ae60; }
   .stat-label { font-size: 10px; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
-  .tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 145px; z-index: 9; overflow-x: auto; scrollbar-width: none; }
+  /* 메인 모드 토글 */
+  .mode-toggle { display: flex; background: #fff; border-bottom: 1px solid #e8e8e8; position: sticky; top: 145px; z-index: 9; }
+  .mode-btn { flex: 1; padding: 12px; font-size: 13px; font-weight: 700; color: #888; background: none; border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .mode-btn.active { color: #c0392b; border-bottom-color: #c0392b; }
+  /* 클래스 탭 */
+  .tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 188px; z-index: 8; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { flex-shrink: 0; padding: 14px 20px; font-size: 13px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .tab.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 700; }
+  /* 학생 리스트 */
   .student-list { padding: 8px 0; }
   .student { display: flex; align-items: center; padding: 14px 24px; border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
   .student:active { background: #fafafa; }
@@ -56,14 +63,18 @@
   .btn:active { transform: scale(0.95); }
   .btn.present-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
   .btn.absent-btn.active { background: #c0392b; color: #fff; border-color: #c0392b; }
+  /* 저장바 */
   .save-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #fff; border-top: 1px solid #e8e8e8; padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 10px; z-index: 11; }
+  .save-bar.hidden { display: none; }
   .save-info { flex: 1; font-size: 11px; color: #888; display: flex; align-items: center; }
   .save-info strong { color: #1a1a1a; margin-right: 4px; }
   .save-btn { background: #c0392b; color: #fff; border: none; padding: 12px 28px; font-weight: 700; font-size: 13px; border-radius: 6px; transition: all 0.15s; }
   .save-btn:active { transform: scale(0.97); background: #a02e22; }
   .save-btn:disabled { background: #ccc; cursor: not-allowed; }
+  /* 토스트 */
   .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 6px; font-size: 13px; font-weight: 500; z-index: 1000; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-left: 3px solid #c0392b; max-width: 90%; }
   .toast.show { transform: translateX(-50%) translateY(0); }
+  /* 로딩 */
   .loading { display: flex; align-items: center; justify-content: center; padding: 60px 20px; color: #888; font-size: 13px; }
   .spinner { width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top-color: #c0392b; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -72,6 +83,7 @@
   .status-badge { display: inline-block; padding: 3px 8px; background: #e8f5e9; color: #27ae60; font-size: 10px; font-weight: 700; border-radius: 3px; margin-left: 8px; letter-spacing: 0.5px; }
   .status-badge.connecting { background: #fff3e0; color: #f57c00; }
   .status-badge.error { background: #ffebee; color: #c0392b; }
+  /* 모달 */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-start; justify-content: center; z-index: 100; overflow-y: auto; }
   .modal-overlay.show { display: flex; }
   .modal { background: #fff; width: 100%; max-width: 480px; min-height: 100vh; animation: slideUp 0.3s ease; }
@@ -80,6 +92,7 @@
   .modal-title { font-weight: 700; font-size: 15px; }
   .modal-close { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; line-height: 1; }
   .modal-close:active { background: rgba(255,255,255,0.2); }
+  /* 비밀번호 */
   .pwd-screen { text-align: center; padding: 40px 24px; }
   .pwd-icon { width: 60px; height: 60px; background: #c0392b; color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
   .pwd-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
@@ -91,8 +104,10 @@
   .pwd-btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; transition: all 0.15s; }
   .pwd-btn:active { transform: scale(0.98); }
   .pwd-error-msg { color: #c0392b; font-size: 12px; margin-top: 8px; min-height: 16px; }
-  .admin-tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 60px; z-index: 4; }
-  .admin-tab { flex: 1; padding: 14px 8px; font-size: 12px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; text-align: center; transition: all 0.2s; }
+  /* 관리자 탭 */
+  .admin-tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 60px; z-index: 4; overflow-x: auto; scrollbar-width: none; }
+  .admin-tabs::-webkit-scrollbar { display: none; }
+  .admin-tab { flex: 1; min-width: 80px; padding: 14px 8px; font-size: 12px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; text-align: center; transition: all 0.2s; white-space: nowrap; }
   .admin-tab.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 700; }
   .admin-content { padding: 16px 0 100px; }
   .admin-section-header { padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
@@ -109,14 +124,18 @@
   .icon-btn svg { width: 14px; height: 14px; }
   .icon-btn.danger { color: #c0392b; }
   .icon-btn.danger:active { background: #ffebee; }
+  /* 폼 */
   .form-group { margin-bottom: 16px; }
   .form-label { display: block; font-size: 12px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
-  .form-input, .form-select { width: 100%; padding: 12px 14px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; }
-  .form-input:focus, .form-select:focus { outline: none; border-color: #c0392b; }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #c0392b; }
   .form-buttons { display: flex; gap: 8px; margin-top: 24px; }
   .form-btn { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #e8e8e8; font-weight: 700; font-size: 13px; background: #fff; color: #888; transition: all 0.15s; }
   .form-btn:active { transform: scale(0.98); }
   .form-btn.primary { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* 출결 기록 */
   .record-controls { padding: 16px 24px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
   .date-input { width: 100%; padding: 10px 12px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; margin-bottom: 8px; }
   .record-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
@@ -130,12 +149,58 @@
   .record-status.present { background: #e8f5e9; color: #27ae60; }
   .record-status.absent { background: #ffebee; color: #c0392b; }
   .record-status.none { background: #f0f0f0; color: #888; }
-  .empty-state { padding: 60px 24px; text-align: center; color: #888; font-size: 13px; }
+  .empty-state { padding: 60px 24px; text-align: center; color: #888; font-size: 13px; line-height: 1.7; }
+  .empty-state .big-icon { font-size: 48px; margin-bottom: 16px; }
   .class-header { padding: 8px 24px; background: #fafafa; font-size: 11px; font-weight: 700; color: #c0392b; border-bottom: 1px solid #f0f0f0; }
+  /* === 갤러리 === */
+  .gallery-students { padding: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .gallery-student-card { background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #f0f0f0; transition: all 0.2s; cursor: pointer; }
+  .gallery-student-card:active { transform: scale(0.97); }
+  .gallery-student-thumb { aspect-ratio: 1; background: #f0f0f0; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .gallery-student-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-student-thumb .placeholder { color: #ccc; font-size: 32px; font-weight: 900; }
+  .gallery-student-info { padding: 8px 10px; }
+  .gallery-student-name { font-weight: 700; font-size: 13px; }
+  .gallery-student-count { font-size: 10px; color: #888; margin-top: 2px; }
+  .gallery-class-section { padding: 0 0 16px; }
+  /* 작품 그리드 */
+  .gallery-grid { padding: 4px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .gallery-tile { aspect-ratio: 1; background: #f0f0f0; cursor: pointer; overflow: hidden; transition: opacity 0.15s; }
+  .gallery-tile:active { opacity: 0.7; }
+  .gallery-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* 학생 갤러리 헤더 */
+  .student-gallery-header { padding: 24px; background: #fafafa; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 16px; }
+  .student-gallery-header .avatar { width: 60px; height: 60px; font-size: 22px; }
+  .sgh-info { flex: 1; }
+  .sgh-name { font-size: 18px; font-weight: 700; }
+  .sgh-meta { font-size: 12px; color: #888; margin-top: 2px; }
+  .sgh-count { font-size: 11px; color: #c0392b; font-weight: 700; margin-top: 4px; }
+  .back-btn { background: rgba(0,0,0,0.05); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .back-btn:active { background: rgba(0,0,0,0.1); }
+  .back-btn svg { width: 18px; height: 18px; color: #1a1a1a; }
+  /* 작품 상세 모달 */
+  .artwork-detail { padding: 0; }
+  .artwork-image { width: 100%; max-height: 70vh; object-fit: contain; background: #1a1a1a; display: block; }
+  .artwork-info { padding: 20px 24px; }
+  .artwork-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .artwork-student { font-size: 13px; color: #c0392b; font-weight: 700; margin-bottom: 12px; }
+  .artwork-meta-row { font-size: 12px; color: #888; margin-bottom: 16px; }
+  .artwork-description { font-size: 14px; line-height: 1.7; color: #1a1a1a; margin-bottom: 16px; white-space: pre-wrap; }
+  .artwork-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { display: inline-block; padding: 4px 10px; background: #f0f0f0; color: #666; font-size: 11px; font-weight: 500; border-radius: 12px; }
+  .artwork-actions { padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; gap: 8px; }
+  /* 업로드 폼 */
+  .upload-area { border: 2px dashed #e8e8e8; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
+  .upload-area:hover { border-color: #c0392b; background: #fef8f7; }
+  .upload-area.has-image { padding: 0; border: none; }
+  .upload-area .upload-icon { font-size: 32px; color: #ccc; margin-bottom: 8px; }
+  .upload-area .upload-text { font-size: 13px; color: #888; }
+  .upload-area .upload-text strong { color: #c0392b; }
+  .upload-preview { width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; background: #f0f0f0; }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
   <div class="header">
     <div class="header-top">
       <div class="logo">
@@ -147,7 +212,7 @@
           <div class="date-main" id="dateMain"></div>
           <div class="date-sub" id="dateSub"></div>
         </div>
-        <button class="settings-btn" id="settingsBtn" title="관리자">
+        <button class="icon-header-btn" id="settingsBtn" title="관리자">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -155,17 +220,21 @@
         </button>
       </div>
     </div>
-    <div class="stats">
+    <div class="stats" id="statsBar">
       <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">전체</div></div>
       <div class="stat"><div class="stat-num green" id="presentCount">0</div><div class="stat-label">출석</div></div>
       <div class="stat"><div class="stat-num red" id="absentCount">0</div><div class="stat-label">결석</div></div>
     </div>
   </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" data-mode="attendance">📋 출결</button>
+    <button class="mode-btn" data-mode="gallery">🎨 갤러리</button>
+  </div>
   <div class="tabs" id="tabs"></div>
-  <div id="content"><div class="loading"><div class="spinner"></div>학생 명단을 불러오는 중...</div></div>
+  <div id="content"><div class="loading"><div class="spinner"></div>불러오는 중...</div></div>
 </div>
 
-<div class="save-bar">
+<div class="save-bar" id="saveBar">
   <div class="save-info"><strong id="changeCount">0</strong>건 변경됨</div>
   <button class="save-btn" id="saveBtn" disabled>저장하기</button>
 </div>
@@ -177,6 +246,16 @@
       <button class="modal-close" id="adminModalClose">×</button>
     </div>
     <div id="adminBody"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="artworkModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">작품 상세</div>
+      <button class="modal-close" id="artworkModalClose">×</button>
+    </div>
+    <div id="artworkModalBody"></div>
   </div>
 </div>
 
@@ -198,6 +277,9 @@ let pendingChanges = {};
 let currentTab = '';
 let isAdminAuth = false;
 let currentAdminTab = 'students';
+let currentMode = 'attendance';
+let artworks = [];
+let selectedStudent = null; // 갤러리에서 선택된 학생
 
 function getTodayKey() {
   const now = new Date();
@@ -224,6 +306,11 @@ function escapeHtml(s) {
   if (s == null) return '';
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+function formatDate(d) {
+  if (!d) return '';
+  const date = new Date(d);
+  return `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')}`;
+}
 
 async function loadData() {
   try {
@@ -239,10 +326,12 @@ async function loadData() {
     attendanceMap = {};
     (attData || []).forEach(a => { attendanceMap[a.student_id] = a.status; });
 
+    const { data: artData, error: e3 } = await db.from('artworks').select('*').order('created_at', { ascending: false });
+    if (e3) throw e3;
+    artworks = artData || [];
+
     setConnStatus('', '연결됨');
-    renderTabs();
-    renderStudents();
-    updateStats();
+    renderMode();
   } catch (err) {
     console.error(err);
     setConnStatus('error', '연결 오류');
@@ -250,11 +339,41 @@ async function loadData() {
   }
 }
 
+// ===== 모드 전환 =====
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.onclick = () => {
+    currentMode = btn.dataset.mode;
+    selectedStudent = null;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === currentMode));
+    renderMode();
+  };
+});
+
+function renderMode() {
+  const saveBar = document.getElementById('saveBar');
+  const stats = document.getElementById('statsBar');
+  if (currentMode === 'attendance') {
+    saveBar.classList.remove('hidden');
+    document.getElementById('app').classList.remove('no-savebar');
+    stats.style.display = 'grid';
+    renderTabs();
+    renderStudents();
+    updateStats();
+  } else {
+    saveBar.classList.add('hidden');
+    document.getElementById('app').classList.add('no-savebar');
+    stats.style.display = 'none';
+    renderGallery();
+  }
+}
+
+// ===== 출결 화면 =====
 function renderTabs() {
+  const tabs = document.getElementById('tabs');
+  if (currentMode !== 'attendance') { tabs.innerHTML = ''; return; }
   const classes = [...new Set(students.map(s => s.class_name))];
   if (!currentTab && classes.length > 0) currentTab = classes[0];
   if (currentTab && !classes.includes(currentTab) && classes.length > 0) currentTab = classes[0];
-  const tabs = document.getElementById('tabs');
   tabs.innerHTML = '';
   classes.forEach(name => {
     const tab = document.createElement('div');
@@ -268,7 +387,7 @@ function renderTabs() {
 function renderStudents() {
   const content = document.getElementById('content');
   if (students.length === 0) {
-    content.innerHTML = '<div class="empty-state">등록된 학생이 없습니다.<br>설정 ⚙️ 에서 학생을 추가해주세요.</div>';
+    content.innerHTML = '<div class="empty-state"><div class="big-icon">👥</div>등록된 학생이 없습니다.<br>설정 ⚙️ 에서 학생을 추가해주세요.</div>';
     return;
   }
   content.innerHTML = '<div class="student-list" id="studentList"></div>';
@@ -362,7 +481,154 @@ async function save() {
 }
 document.getElementById('saveBtn').onclick = save;
 
-// ============ 관리자 ============
+// ===== 갤러리 화면 =====
+function renderGallery() {
+  document.getElementById('tabs').innerHTML = '';
+  const content = document.getElementById('content');
+
+  if (selectedStudent) {
+    renderStudentGallery(selectedStudent);
+    return;
+  }
+
+  if (students.length === 0) {
+    content.innerHTML = '<div class="empty-state"><div class="big-icon">🎨</div>학생이 없습니다.<br>먼저 학생을 등록해주세요.</div>';
+    return;
+  }
+
+  // 학생별 작품 수 + 대표 작품
+  const studentArtworkMap = {};
+  artworks.forEach(a => {
+    if (!studentArtworkMap[a.student_id]) studentArtworkMap[a.student_id] = [];
+    studentArtworkMap[a.student_id].push(a);
+  });
+
+  const classes = [...new Set(students.map(s => s.class_name))];
+  let html = '';
+  classes.forEach(cls => {
+    const clsStudents = students.filter(s => s.class_name === cls);
+    html += `<div class="gallery-class-section">
+      <div class="class-header">${escapeHtml(cls)}</div>
+      <div class="gallery-students">`;
+    clsStudents.forEach(s => {
+      const studentArts = studentArtworkMap[s.id] || [];
+      const thumb = studentArts[0];
+      html += `
+        <div class="gallery-student-card" data-student-id="${s.id}">
+          <div class="gallery-student-thumb">
+            ${thumb ? `<img src="${escapeHtml(thumb.image_url)}" alt="${escapeHtml(s.name)}" loading="lazy" />` : `<div class="placeholder">${escapeHtml(s.name.charAt(0))}</div>`}
+          </div>
+          <div class="gallery-student-info">
+            <div class="gallery-student-name">${escapeHtml(s.name)}</div>
+            <div class="gallery-student-count">${studentArts.length}개 작품</div>
+          </div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  content.innerHTML = html;
+
+  content.querySelectorAll('.gallery-student-card').forEach(card => {
+    card.onclick = () => {
+      const id = parseInt(card.dataset.studentId);
+      selectedStudent = students.find(s => s.id === id);
+      renderGallery();
+    };
+  });
+}
+
+function renderStudentGallery(student) {
+  const content = document.getElementById('content');
+  const studentArts = artworks.filter(a => a.student_id === student.id);
+
+  let html = `
+    <div class="student-gallery-header">
+      <button class="back-btn" id="backToGallery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="avatar">${escapeHtml(student.name.charAt(0))}</div>
+      <div class="sgh-info">
+        <div class="sgh-name">${escapeHtml(student.name)}</div>
+        <div class="sgh-meta">${escapeHtml(student.class_name)} · ${escapeHtml(student.grade || '')} ${student.school ? '· '+escapeHtml(student.school) : ''}</div>
+        <div class="sgh-count">작품 ${studentArts.length}개</div>
+      </div>
+    </div>`;
+
+  if (studentArts.length === 0) {
+    html += '<div class="empty-state"><div class="big-icon">🎨</div>아직 작품이 없습니다.<br>관리자 페이지에서 작품을 업로드해보세요.</div>';
+  } else {
+    html += '<div class="gallery-grid">';
+    studentArts.forEach(a => {
+      html += `<div class="gallery-tile" data-artwork-id="${a.id}"><img src="${escapeHtml(a.image_url)}" loading="lazy" alt="${escapeHtml(a.title || '')}" /></div>`;
+    });
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+
+  document.getElementById('backToGallery').onclick = () => {
+    selectedStudent = null;
+    renderGallery();
+  };
+
+  content.querySelectorAll('.gallery-tile').forEach(tile => {
+    tile.onclick = () => {
+      const id = parseInt(tile.dataset.artworkId);
+      const artwork = artworks.find(a => a.id === id);
+      if (artwork) showArtworkDetail(artwork);
+    };
+  });
+}
+
+// ===== 작품 상세 모달 =====
+function showArtworkDetail(artwork) {
+  const student = students.find(s => s.id === artwork.student_id);
+  const modal = document.getElementById('artworkModal');
+  const body = document.getElementById('artworkModalBody');
+
+  body.innerHTML = `
+    <div class="artwork-detail">
+      <img class="artwork-image" src="${escapeHtml(artwork.image_url)}" alt="${escapeHtml(artwork.title || '')}" />
+      <div class="artwork-info">
+        ${artwork.title ? `<div class="artwork-title">${escapeHtml(artwork.title)}</div>` : ''}
+        ${student ? `<div class="artwork-student">${escapeHtml(student.name)} · ${escapeHtml(student.class_name)}</div>` : ''}
+        <div class="artwork-meta-row">
+          ${artwork.subject ? `📚 ${escapeHtml(artwork.subject)} · ` : ''}
+          📅 ${formatDate(artwork.created_at)}
+        </div>
+        ${artwork.description ? `<div class="artwork-description">${escapeHtml(artwork.description)}</div>` : ''}
+        ${artwork.tags && artwork.tags.length > 0 ? `<div class="artwork-tags">${artwork.tags.map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      </div>
+      ${isAdminAuth ? `
+        <div class="artwork-actions">
+          <button class="form-btn" id="artworkEdit">수정</button>
+          <button class="form-btn danger" id="artworkDelete" style="color:#c0392b;border-color:#c0392b;">삭제</button>
+        </div>
+      ` : ''}
+    </div>`;
+
+  modal.classList.add('show');
+
+  if (isAdminAuth) {
+    document.getElementById('artworkEdit').onclick = () => {
+      modal.classList.remove('show');
+      currentAdminTab = 'artworks';
+      openAdminModal();
+      setTimeout(() => showArtworkForm(artwork), 100);
+    };
+    document.getElementById('artworkDelete').onclick = async () => {
+      if (!confirm('이 작품을 삭제하시겠습니까?')) return;
+      await deleteArtwork(artwork);
+      modal.classList.remove('show');
+    };
+  }
+}
+document.getElementById('artworkModalClose').onclick = () => document.getElementById('artworkModal').classList.remove('show');
+
+// ============================================
+// 관리자 기능
+// ============================================
 const adminModal = document.getElementById('adminModal');
 const adminBody = document.getElementById('adminBody');
 const adminTitle = document.getElementById('adminModalTitle');
@@ -414,9 +680,10 @@ function renderAdminPanel() {
   adminTitle.textContent = '관리자 페이지';
   adminBody.innerHTML = `
     <div class="admin-tabs">
-      <div class="admin-tab ${currentAdminTab==='students'?'active':''}" data-tab="students">학생 관리</div>
-      <div class="admin-tab ${currentAdminTab==='classes'?'active':''}" data-tab="classes">반 관리</div>
-      <div class="admin-tab ${currentAdminTab==='records'?'active':''}" data-tab="records">출결 기록</div>
+      <div class="admin-tab ${currentAdminTab==='students'?'active':''}" data-tab="students">학생</div>
+      <div class="admin-tab ${currentAdminTab==='classes'?'active':''}" data-tab="classes">반</div>
+      <div class="admin-tab ${currentAdminTab==='artworks'?'active':''}" data-tab="artworks">작품</div>
+      <div class="admin-tab ${currentAdminTab==='records'?'active':''}" data-tab="records">출결기록</div>
     </div>
     <div class="admin-content" id="adminContent"></div>`;
   document.querySelectorAll('.admin-tab').forEach(t => {
@@ -424,9 +691,11 @@ function renderAdminPanel() {
   });
   if (currentAdminTab === 'students') renderStudentManager();
   else if (currentAdminTab === 'classes') renderClassManager();
+  else if (currentAdminTab === 'artworks') renderArtworkManager();
   else if (currentAdminTab === 'records') renderRecordViewer();
 }
 
+// ===== 학생 관리 =====
 function renderStudentManager() {
   const content = document.getElementById('adminContent');
   const classes = [...new Set(students.map(s => s.class_name))];
@@ -508,16 +777,10 @@ function showStudentForm(student = null) {
     </div>`;
   const classSelect = document.getElementById('fClass');
   const newClassInput = document.getElementById('fNewClass');
-  if (classes.length === 0) {
-    classSelect.value = '__new__';
-  }
+  if (classes.length === 0) classSelect.value = '__new__';
   classSelect.onchange = () => {
-    if (classSelect.value === '__new__') {
-      newClassInput.style.display = 'block';
-      newClassInput.focus();
-    } else {
-      newClassInput.style.display = 'none';
-    }
+    if (classSelect.value === '__new__') { newClassInput.style.display = 'block'; newClassInput.focus(); }
+    else newClassInput.style.display = 'none';
   };
   document.getElementById('fCancel').onclick = renderStudentManager;
   document.getElementById('fSave').onclick = async () => {
@@ -548,7 +811,7 @@ function showStudentForm(student = null) {
 }
 
 async function deleteStudent(student) {
-  if (!confirm(`'${student.name}' 학생을 삭제하시겠습니까?\n관련 출결 기록도 모두 삭제됩니다.`)) return;
+  if (!confirm(`'${student.name}' 학생을 삭제하시겠습니까?\n관련 출결 기록과 작품도 모두 삭제됩니다.`)) return;
   try {
     const { error } = await db.from('students').delete().eq('id', student.id);
     if (error) throw error;
@@ -561,6 +824,7 @@ async function deleteStudent(student) {
   }
 }
 
+// ===== 반 관리 =====
 function renderClassManager() {
   const content = document.getElementById('adminContent');
   const classes = [...new Set(students.map(s => s.class_name))];
@@ -584,7 +848,7 @@ function renderClassManager() {
         </div>`;
     });
   }
-  html += `<div style="padding:24px;"><div style="font-size:13px;color:#888;margin-bottom:8px;">💡 팁</div><div style="font-size:12px;color:#666;line-height:1.6;">새 반은 [학생 관리]에서 학생을 추가할 때 자동으로 생성됩니다.</div></div>`;
+  html += `<div style="padding:24px;"><div style="font-size:13px;color:#888;margin-bottom:8px;">💡 팁</div><div style="font-size:12px;color:#666;line-height:1.6;">새 반은 [학생]에서 학생을 추가할 때 자동으로 생성됩니다.</div></div>`;
   content.innerHTML = html;
   content.querySelectorAll('[data-action="rename"]').forEach(btn => {
     btn.onclick = () => renameClass(btn.dataset.class);
@@ -608,6 +872,229 @@ async function renameClass(oldName) {
   }
 }
 
+// ===== 작품 관리 =====
+function renderArtworkManager() {
+  const content = document.getElementById('adminContent');
+  let html = `
+    <div class="admin-section-header">
+      <div class="admin-section-title">전체 작품 (${artworks.length}개)</div>
+      <button class="add-btn" id="addArtworkBtn">+ 작품 업로드</button>
+    </div>`;
+
+  if (artworks.length === 0) {
+    html += '<div class="empty-state"><div class="big-icon">🎨</div>등록된 작품이 없습니다.<br>+ 작품 업로드 버튼을 눌러주세요.</div>';
+  } else {
+    artworks.forEach(a => {
+      const student = students.find(s => s.id === a.student_id);
+      html += `
+        <div class="admin-list-item">
+          <div style="width:50px;height:50px;background:#f0f0f0;border-radius:6px;overflow:hidden;flex-shrink:0;">
+            <img src="${escapeHtml(a.image_url)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" />
+          </div>
+          <div class="admin-item-info">
+            <div class="admin-item-name">${escapeHtml(a.title || '제목 없음')}</div>
+            <div class="admin-item-meta">${student ? escapeHtml(student.name) : '(삭제된 학생)'} · ${formatDate(a.created_at)}</div>
+          </div>
+          <div class="admin-item-actions">
+            <button class="icon-btn" data-action="edit" data-id="${a.id}" title="수정">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn danger" data-action="delete" data-id="${a.id}" title="삭제">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+          </div>
+        </div>`;
+    });
+  }
+
+  content.innerHTML = html;
+  document.getElementById('addArtworkBtn').onclick = () => showArtworkForm();
+  content.querySelectorAll('[data-action]').forEach(btn => {
+    btn.onclick = () => {
+      const id = parseInt(btn.dataset.id);
+      const action = btn.dataset.action;
+      const artwork = artworks.find(a => a.id === id);
+      if (action === 'edit') showArtworkForm(artwork);
+      else if (action === 'delete') deleteArtwork(artwork);
+    };
+  });
+}
+
+function showArtworkForm(artwork = null) {
+  const isEdit = !!artwork;
+  const content = document.getElementById('adminContent');
+
+  if (students.length === 0) {
+    content.innerHTML = '<div class="empty-state">먼저 학생을 등록해주세요.</div>';
+    return;
+  }
+
+  content.innerHTML = `
+    <div style="padding:24px;">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px;">${isEdit ? '작품 수정' : '작품 업로드'}</div>
+      
+      <div class="form-group">
+        <label class="form-label">이미지 ${isEdit ? '' : '*'}</label>
+        <div class="upload-area ${isEdit ? 'has-image' : ''}" id="uploadArea">
+          ${isEdit ? `<img class="upload-preview" src="${escapeHtml(artwork.image_url)}" id="uploadPreview" />` : `
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-text">이미지를 선택하거나<br><strong>여기를 탭</strong>해서 업로드</div>
+          `}
+        </div>
+        <input type="file" id="fImage" accept="image/*" style="display:none;" />
+        ${isEdit ? '<div style="font-size:11px;color:#888;margin-top:6px;">※ 이미지를 변경하려면 위 이미지를 탭하세요</div>' : ''}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">학생 *</label>
+        <select class="form-select" id="fStudent">
+          ${students.map(s => `<option value="${s.id}" ${artwork && artwork.student_id === s.id ? 'selected':''}>${escapeHtml(s.name)} (${escapeHtml(s.class_name)})</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">제목</label>
+        <input type="text" class="form-input" id="fTitle" value="${artwork ? escapeHtml(artwork.title || '') : ''}" placeholder="예: 정물 연구 - 사과와 항아리" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">수업 주제</label>
+        <input type="text" class="form-input" id="fSubject" value="${artwork ? escapeHtml(artwork.subject || '') : ''}" placeholder="예: 기초 디자인, 발상과 표현" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">설명 / 코멘트</label>
+        <textarea class="form-textarea" id="fDescription" placeholder="작품에 대한 설명이나 강사 코멘트를 입력하세요">${artwork ? escapeHtml(artwork.description || '') : ''}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">태그 (쉼표로 구분)</label>
+        <input type="text" class="form-input" id="fTags" value="${artwork && artwork.tags ? escapeHtml(artwork.tags.join(', ')) : ''}" placeholder="예: 우수작, 입시포트폴리오, 정물화" />
+      </div>
+
+      <div class="form-buttons">
+        <button class="form-btn" id="fCancel">취소</button>
+        <button class="form-btn primary" id="fSave">${isEdit ? '수정' : '업로드'}</button>
+      </div>
+    </div>`;
+
+  const uploadArea = document.getElementById('uploadArea');
+  const fImage = document.getElementById('fImage');
+  let selectedFile = null;
+  let imageDataUrl = null;
+
+  uploadArea.onclick = () => fImage.click();
+
+  fImage.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('이미지 파일만 업로드 가능합니다'); return; }
+    if (file.size > 10 * 1024 * 1024) { showToast('파일 크기는 10MB 이하여야 합니다'); return; }
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      imageDataUrl = ev.target.result;
+      uploadArea.classList.add('has-image');
+      uploadArea.innerHTML = `<img class="upload-preview" src="${imageDataUrl}" />`;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  document.getElementById('fCancel').onclick = renderArtworkManager;
+
+  document.getElementById('fSave').onclick = async () => {
+    const studentId = parseInt(document.getElementById('fStudent').value);
+    const title = document.getElementById('fTitle').value.trim();
+    const subject = document.getElementById('fSubject').value.trim();
+    const description = document.getElementById('fDescription').value.trim();
+    const tagsRaw = document.getElementById('fTags').value.trim();
+    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(t => t) : [];
+
+    if (!isEdit && !selectedFile) { showToast('이미지를 선택해주세요'); return; }
+    if (!studentId) { showToast('학생을 선택해주세요'); return; }
+
+    const saveBtn = document.getElementById('fSave');
+    saveBtn.disabled = true;
+    saveBtn.textContent = '업로드 중...';
+
+    try {
+      let imageUrl = artwork ? artwork.image_url : null;
+
+      if (selectedFile) {
+        // 파일 업로드
+        const ext = selectedFile.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
+        const { data: uploadData, error: uploadError } = await db.storage
+          .from('artworks')
+          .upload(fileName, selectedFile, { cacheControl: '3600', upsert: false });
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = db.storage.from('artworks').getPublicUrl(fileName);
+        imageUrl = urlData.publicUrl;
+
+        // 기존 이미지가 있으면 삭제 (수정 시)
+        if (isEdit && artwork.image_url) {
+          const oldPath = artwork.image_url.split('/artworks/').pop();
+          if (oldPath) {
+            await db.storage.from('artworks').remove([oldPath]).catch(()=>{});
+          }
+        }
+      }
+
+      const payload = {
+        student_id: studentId,
+        image_url: imageUrl,
+        title: title || null,
+        subject: subject || null,
+        description: description || null,
+        tags: tags.length > 0 ? tags : null
+      };
+
+      if (isEdit) {
+        const { error } = await db.from('artworks').update(payload).eq('id', artwork.id);
+        if (error) throw error;
+        showToast('✓ 작품이 수정되었습니다');
+      } else {
+        const { error } = await db.from('artworks').insert(payload);
+        if (error) throw error;
+        showToast('✓ 작품이 업로드되었습니다');
+      }
+
+      await loadData();
+      renderArtworkManager();
+    } catch (err) {
+      console.error(err);
+      showToast('실패: ' + (err.message || err));
+      saveBtn.disabled = false;
+      saveBtn.textContent = isEdit ? '수정' : '업로드';
+    }
+  };
+}
+
+async function deleteArtwork(artwork) {
+  if (!confirm('이 작품을 삭제하시겠습니까?')) return;
+  try {
+    // Storage에서 이미지 삭제
+    if (artwork.image_url) {
+      const path = artwork.image_url.split('/artworks/').pop();
+      if (path) {
+        await db.storage.from('artworks').remove([path]).catch(()=>{});
+      }
+    }
+    // DB에서 작품 삭제
+    const { error } = await db.from('artworks').delete().eq('id', artwork.id);
+    if (error) throw error;
+    showToast('✓ 삭제되었습니다');
+    await loadData();
+    if (currentMode === 'gallery') renderGallery();
+    else renderArtworkManager();
+  } catch (err) {
+    console.error(err);
+    showToast('삭제 실패: ' + (err.message || err));
+  }
+}
+
+// ===== 출결 기록 =====
 async function renderRecordViewer() {
   const content = document.getElementById('adminContent');
   const today = getTodayKey();
