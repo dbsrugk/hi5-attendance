@@ -39,16 +39,13 @@
   .stat-num.red { color: #c0392b; }
   .stat-num.green { color: #27ae60; }
   .stat-label { font-size: 10px; color: #888; margin-top: 4px; letter-spacing: 0.5px; }
-  /* 메인 모드 토글 */
   .mode-toggle { display: flex; background: #fff; border-bottom: 1px solid #e8e8e8; position: sticky; top: 145px; z-index: 9; }
   .mode-btn { flex: 1; padding: 12px; font-size: 13px; font-weight: 700; color: #888; background: none; border: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
   .mode-btn.active { color: #c0392b; border-bottom-color: #c0392b; }
-  /* 클래스 탭 */
   .tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 188px; z-index: 8; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { flex-shrink: 0; padding: 14px 20px; font-size: 13px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .tab.active { color: #c0392b; border-bottom-color: #c0392b; font-weight: 700; }
-  /* 학생 리스트 */
   .student-list { padding: 8px 0; }
   .student { display: flex; align-items: center; padding: 14px 24px; border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
   .student:active { background: #fafafa; }
@@ -63,7 +60,6 @@
   .btn:active { transform: scale(0.95); }
   .btn.present-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
   .btn.absent-btn.active { background: #c0392b; color: #fff; border-color: #c0392b; }
-  /* 저장바 */
   .save-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #fff; border-top: 1px solid #e8e8e8; padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); display: flex; gap: 10px; z-index: 11; }
   .save-bar.hidden { display: none; }
   .save-info { flex: 1; font-size: 11px; color: #888; display: flex; align-items: center; }
@@ -71,10 +67,8 @@
   .save-btn { background: #c0392b; color: #fff; border: none; padding: 12px 28px; font-weight: 700; font-size: 13px; border-radius: 6px; transition: all 0.15s; }
   .save-btn:active { transform: scale(0.97); background: #a02e22; }
   .save-btn:disabled { background: #ccc; cursor: not-allowed; }
-  /* 토스트 */
   .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 6px; font-size: 13px; font-weight: 500; z-index: 1000; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 20px rgba(0,0,0,0.15); border-left: 3px solid #c0392b; max-width: 90%; }
   .toast.show { transform: translateX(-50%) translateY(0); }
-  /* 로딩 */
   .loading { display: flex; align-items: center; justify-content: center; padding: 60px 20px; color: #888; font-size: 13px; }
   .spinner { width: 24px; height: 24px; border: 3px solid #f0f0f0; border-top-color: #c0392b; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -83,7 +77,6 @@
   .status-badge { display: inline-block; padding: 3px 8px; background: #e8f5e9; color: #27ae60; font-size: 10px; font-weight: 700; border-radius: 3px; margin-left: 8px; letter-spacing: 0.5px; }
   .status-badge.connecting { background: #fff3e0; color: #f57c00; }
   .status-badge.error { background: #ffebee; color: #c0392b; }
-  /* 모달 */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-start; justify-content: center; z-index: 100; overflow-y: auto; }
   .modal-overlay.show { display: flex; }
   .modal { background: #fff; width: 100%; max-width: 480px; min-height: 100vh; animation: slideUp 0.3s ease; }
@@ -92,19 +85,22 @@
   .modal-title { font-weight: 700; font-size: 15px; }
   .modal-close { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; line-height: 1; }
   .modal-close:active { background: rgba(255,255,255,0.2); }
-  /* 비밀번호 */
   .pwd-screen { text-align: center; padding: 40px 24px; }
   .pwd-icon { width: 60px; height: 60px; background: #c0392b; color: #fff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
   .pwd-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
   .pwd-subtitle { font-size: 13px; color: #888; margin-bottom: 30px; }
-  .pwd-input { width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 8px; font-size: 16px; text-align: center; margin-bottom: 12px; transition: border-color 0.2s; }
+  /* 비밀번호 입력 + 보이기 토글 */
+  .pwd-input-wrap { position: relative; margin-bottom: 12px; }
+  .pwd-input { width: 100%; padding: 14px 50px 14px 16px; border: 2px solid #e8e8e8; border-radius: 8px; font-size: 16px; text-align: center; transition: border-color 0.2s; }
   .pwd-input:focus { outline: none; border-color: #c0392b; }
   .pwd-input.error { border-color: #c0392b; animation: shake 0.4s; }
   @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .pwd-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 8px; color: #888; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: all 0.15s; }
+  .pwd-toggle:hover { color: #c0392b; background: #f5f5f5; }
+  .pwd-toggle svg { width: 20px; height: 20px; }
   .pwd-btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; transition: all 0.15s; }
   .pwd-btn:active { transform: scale(0.98); }
   .pwd-error-msg { color: #c0392b; font-size: 12px; margin-top: 8px; min-height: 16px; }
-  /* 관리자 탭 */
   .admin-tabs { display: flex; border-bottom: 1px solid #e8e8e8; background: #fff; position: sticky; top: 60px; z-index: 4; overflow-x: auto; scrollbar-width: none; }
   .admin-tabs::-webkit-scrollbar { display: none; }
   .admin-tab { flex: 1; min-width: 80px; padding: 14px 8px; font-size: 12px; font-weight: 500; color: #888; border-bottom: 2px solid transparent; text-align: center; transition: all 0.2s; white-space: nowrap; }
@@ -124,7 +120,6 @@
   .icon-btn svg { width: 14px; height: 14px; }
   .icon-btn.danger { color: #c0392b; }
   .icon-btn.danger:active { background: #ffebee; }
-  /* 폼 */
   .form-group { margin-bottom: 16px; }
   .form-label { display: block; font-size: 12px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
   .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; }
@@ -135,7 +130,6 @@
   .form-btn:active { transform: scale(0.98); }
   .form-btn.primary { background: #c0392b; color: #fff; border-color: #c0392b; }
   .form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  /* 출결 기록 */
   .record-controls { padding: 16px 24px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
   .date-input { width: 100%; padding: 10px 12px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; margin-bottom: 8px; }
   .record-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
@@ -152,7 +146,7 @@
   .empty-state { padding: 60px 24px; text-align: center; color: #888; font-size: 13px; line-height: 1.7; }
   .empty-state .big-icon { font-size: 48px; margin-bottom: 16px; }
   .class-header { padding: 8px 24px; background: #fafafa; font-size: 11px; font-weight: 700; color: #c0392b; border-bottom: 1px solid #f0f0f0; }
-  /* === 갤러리 === */
+  /* 갤러리 */
   .gallery-students { padding: 12px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .gallery-student-card { background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #f0f0f0; transition: all 0.2s; cursor: pointer; }
   .gallery-student-card:active { transform: scale(0.97); }
@@ -163,12 +157,10 @@
   .gallery-student-name { font-weight: 700; font-size: 13px; }
   .gallery-student-count { font-size: 10px; color: #888; margin-top: 2px; }
   .gallery-class-section { padding: 0 0 16px; }
-  /* 작품 그리드 */
   .gallery-grid { padding: 4px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
   .gallery-tile { aspect-ratio: 1; background: #f0f0f0; cursor: pointer; overflow: hidden; transition: opacity 0.15s; }
   .gallery-tile:active { opacity: 0.7; }
   .gallery-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  /* 학생 갤러리 헤더 */
   .student-gallery-header { padding: 24px; background: #fafafa; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 16px; }
   .student-gallery-header .avatar { width: 60px; height: 60px; font-size: 22px; }
   .sgh-info { flex: 1; }
@@ -178,7 +170,6 @@
   .back-btn { background: rgba(0,0,0,0.05); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .back-btn:active { background: rgba(0,0,0,0.1); }
   .back-btn svg { width: 18px; height: 18px; color: #1a1a1a; }
-  /* 작품 상세 모달 */
   .artwork-detail { padding: 0; }
   .artwork-image { width: 100%; max-height: 70vh; object-fit: contain; background: #1a1a1a; display: block; }
   .artwork-info { padding: 20px 24px; }
@@ -189,7 +180,6 @@
   .artwork-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { display: inline-block; padding: 4px 10px; background: #f0f0f0; color: #666; font-size: 11px; font-weight: 500; border-radius: 12px; }
   .artwork-actions { padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; gap: 8px; }
-  /* 업로드 폼 */
   .upload-area { border: 2px dashed #e8e8e8; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
   .upload-area:hover { border-color: #c0392b; background: #fef8f7; }
   .upload-area.has-image { padding: 0; border: none; }
@@ -197,6 +187,14 @@
   .upload-area .upload-text { font-size: 13px; color: #888; }
   .upload-area .upload-text strong { color: #c0392b; }
   .upload-preview { width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; background: #f0f0f0; }
+  /* AI 분석 버튼 */
+  .ai-analyze-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 14px; transition: all 0.2s; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .ai-analyze-btn:active { transform: scale(0.98); }
+  .ai-analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .ai-analyze-btn .ai-icon { font-size: 18px; }
+  .ai-analyze-btn .ai-spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .ai-hint { font-size: 11px; color: #888; text-align: center; margin-top: -8px; margin-bottom: 16px; }
+  .ai-hint strong { color: #764ba2; }
 </style>
 </head>
 <body>
@@ -267,6 +265,7 @@
 const SUPABASE_URL = 'https://gbjvkbtvcurgsonynokw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_llBLSGHCsOpdKanjt1v2Eg_aHOzIeJP';
 const ADMIN_PASSWORD = 'hi5centum';
+const AI_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/analyze-artwork`;
 
 const { createClient } = window.supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -279,7 +278,7 @@ let isAdminAuth = false;
 let currentAdminTab = 'students';
 let currentMode = 'attendance';
 let artworks = [];
-let selectedStudent = null; // 갤러리에서 선택된 학생
+let selectedStudent = null;
 
 function getTodayKey() {
   const now = new Date();
@@ -322,7 +321,6 @@ async function loadData() {
     const today = getTodayKey();
     const { data: attData, error: e2 } = await db.from('attendance').select('*').eq('date', today);
     if (e2) throw e2;
-
     attendanceMap = {};
     (attData || []).forEach(a => { attendanceMap[a.student_id] = a.status; });
 
@@ -339,7 +337,6 @@ async function loadData() {
   }
 }
 
-// ===== 모드 전환 =====
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.onclick = () => {
     currentMode = btn.dataset.mode;
@@ -367,7 +364,6 @@ function renderMode() {
   }
 }
 
-// ===== 출결 화면 =====
 function renderTabs() {
   const tabs = document.getElementById('tabs');
   if (currentMode !== 'attendance') { tabs.innerHTML = ''; return; }
@@ -481,35 +477,24 @@ async function save() {
 }
 document.getElementById('saveBtn').onclick = save;
 
-// ===== 갤러리 화면 =====
 function renderGallery() {
   document.getElementById('tabs').innerHTML = '';
   const content = document.getElementById('content');
-
-  if (selectedStudent) {
-    renderStudentGallery(selectedStudent);
-    return;
-  }
-
+  if (selectedStudent) { renderStudentGallery(selectedStudent); return; }
   if (students.length === 0) {
     content.innerHTML = '<div class="empty-state"><div class="big-icon">🎨</div>학생이 없습니다.<br>먼저 학생을 등록해주세요.</div>';
     return;
   }
-
-  // 학생별 작품 수 + 대표 작품
   const studentArtworkMap = {};
   artworks.forEach(a => {
     if (!studentArtworkMap[a.student_id]) studentArtworkMap[a.student_id] = [];
     studentArtworkMap[a.student_id].push(a);
   });
-
   const classes = [...new Set(students.map(s => s.class_name))];
   let html = '';
   classes.forEach(cls => {
     const clsStudents = students.filter(s => s.class_name === cls);
-    html += `<div class="gallery-class-section">
-      <div class="class-header">${escapeHtml(cls)}</div>
-      <div class="gallery-students">`;
+    html += `<div class="gallery-class-section"><div class="class-header">${escapeHtml(cls)}</div><div class="gallery-students">`;
     clsStudents.forEach(s => {
       const studentArts = studentArtworkMap[s.id] || [];
       const thumb = studentArts[0];
@@ -526,9 +511,7 @@ function renderGallery() {
     });
     html += `</div></div>`;
   });
-
   content.innerHTML = html;
-
   content.querySelectorAll('.gallery-student-card').forEach(card => {
     card.onclick = () => {
       const id = parseInt(card.dataset.studentId);
@@ -541,7 +524,6 @@ function renderGallery() {
 function renderStudentGallery(student) {
   const content = document.getElementById('content');
   const studentArts = artworks.filter(a => a.student_id === student.id);
-
   let html = `
     <div class="student-gallery-header">
       <button class="back-btn" id="backToGallery">
@@ -554,7 +536,6 @@ function renderStudentGallery(student) {
         <div class="sgh-count">작품 ${studentArts.length}개</div>
       </div>
     </div>`;
-
   if (studentArts.length === 0) {
     html += '<div class="empty-state"><div class="big-icon">🎨</div>아직 작품이 없습니다.<br>관리자 페이지에서 작품을 업로드해보세요.</div>';
   } else {
@@ -564,14 +545,8 @@ function renderStudentGallery(student) {
     });
     html += '</div>';
   }
-
   content.innerHTML = html;
-
-  document.getElementById('backToGallery').onclick = () => {
-    selectedStudent = null;
-    renderGallery();
-  };
-
+  document.getElementById('backToGallery').onclick = () => { selectedStudent = null; renderGallery(); };
   content.querySelectorAll('.gallery-tile').forEach(tile => {
     tile.onclick = () => {
       const id = parseInt(tile.dataset.artworkId);
@@ -581,12 +556,10 @@ function renderStudentGallery(student) {
   });
 }
 
-// ===== 작품 상세 모달 =====
 function showArtworkDetail(artwork) {
   const student = students.find(s => s.id === artwork.student_id);
   const modal = document.getElementById('artworkModal');
   const body = document.getElementById('artworkModalBody');
-
   body.innerHTML = `
     <div class="artwork-detail">
       <img class="artwork-image" src="${escapeHtml(artwork.image_url)}" alt="${escapeHtml(artwork.title || '')}" />
@@ -603,13 +576,11 @@ function showArtworkDetail(artwork) {
       ${isAdminAuth ? `
         <div class="artwork-actions">
           <button class="form-btn" id="artworkEdit">수정</button>
-          <button class="form-btn danger" id="artworkDelete" style="color:#c0392b;border-color:#c0392b;">삭제</button>
+          <button class="form-btn" id="artworkDelete" style="color:#c0392b;border-color:#c0392b;">삭제</button>
         </div>
       ` : ''}
     </div>`;
-
   modal.classList.add('show');
-
   if (isAdminAuth) {
     document.getElementById('artworkEdit').onclick = () => {
       modal.classList.remove('show');
@@ -626,9 +597,7 @@ function showArtworkDetail(artwork) {
 }
 document.getElementById('artworkModalClose').onclick = () => document.getElementById('artworkModal').classList.remove('show');
 
-// ============================================
-// 관리자 기능
-// ============================================
+// 관리자
 const adminModal = document.getElementById('adminModal');
 const adminBody = document.getElementById('adminBody');
 const adminTitle = document.getElementById('adminModalTitle');
@@ -641,9 +610,7 @@ function openAdminModal() {
   if (isAdminAuth) renderAdminPanel();
   else renderPasswordScreen();
 }
-function closeAdminModal() {
-  adminModal.classList.remove('show');
-}
+function closeAdminModal() { adminModal.classList.remove('show'); }
 
 function renderPasswordScreen() {
   adminTitle.textContent = '관리자 로그인';
@@ -652,14 +619,43 @@ function renderPasswordScreen() {
       <div class="pwd-icon">🔒</div>
       <div class="pwd-title">관리자 인증</div>
       <div class="pwd-subtitle">비밀번호를 입력해주세요</div>
-      <input type="password" class="pwd-input" id="pwdInput" placeholder="비밀번호" autocomplete="off" />
+      <div class="pwd-input-wrap">
+        <input type="password" class="pwd-input" id="pwdInput" placeholder="비밀번호" autocomplete="off" />
+        <button type="button" class="pwd-toggle" id="pwdToggle" title="비밀번호 보기">
+          <svg id="pwdIconShow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg id="pwdIconHide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
+        </button>
+      </div>
       <div class="pwd-error-msg" id="pwdErrorMsg"></div>
       <button class="pwd-btn" id="pwdSubmit">확인</button>
     </div>`;
   const input = document.getElementById('pwdInput');
   const submit = document.getElementById('pwdSubmit');
   const errMsg = document.getElementById('pwdErrorMsg');
+  const toggle = document.getElementById('pwdToggle');
+  const iconShow = document.getElementById('pwdIconShow');
+  const iconHide = document.getElementById('pwdIconHide');
   setTimeout(() => input.focus(), 100);
+
+  toggle.onclick = () => {
+    if (input.type === 'password') {
+      input.type = 'text';
+      iconShow.style.display = 'none';
+      iconHide.style.display = '';
+    } else {
+      input.type = 'password';
+      iconShow.style.display = '';
+      iconHide.style.display = 'none';
+    }
+    input.focus();
+  };
+
   function tryAuth() {
     if (input.value === ADMIN_PASSWORD) {
       isAdminAuth = true;
@@ -695,15 +691,10 @@ function renderAdminPanel() {
   else if (currentAdminTab === 'records') renderRecordViewer();
 }
 
-// ===== 학생 관리 =====
 function renderStudentManager() {
   const content = document.getElementById('adminContent');
   const classes = [...new Set(students.map(s => s.class_name))];
-  let html = `
-    <div class="admin-section-header">
-      <div class="admin-section-title">전체 학생 (${students.length}명)</div>
-      <button class="add-btn" id="addStudentBtn">+ 학생 추가</button>
-    </div>`;
+  let html = `<div class="admin-section-header"><div class="admin-section-title">전체 학생 (${students.length}명)</div><button class="add-btn" id="addStudentBtn">+ 학생 추가</button></div>`;
   if (students.length === 0) {
     html += '<div class="empty-state">학생이 없습니다.<br>+ 학생 추가 버튼을 눌러주세요.</div>';
   } else {
@@ -719,12 +710,8 @@ function renderStudentManager() {
               <div class="admin-item-meta">${escapeHtml(s.grade || '')} ${s.school ? '· '+escapeHtml(s.school) : ''}</div>
             </div>
             <div class="admin-item-actions">
-              <button class="icon-btn" data-action="edit" data-id="${s.id}" title="수정">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              </button>
-              <button class="icon-btn danger" data-action="delete" data-id="${s.id}" title="삭제">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-              </button>
+              <button class="icon-btn" data-action="edit" data-id="${s.id}" title="수정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="icon-btn danger" data-action="delete" data-id="${s.id}" title="삭제"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
             </div>
           </div>`;
       });
@@ -824,7 +811,6 @@ async function deleteStudent(student) {
   }
 }
 
-// ===== 반 관리 =====
 function renderClassManager() {
   const content = document.getElementById('adminContent');
   const classes = [...new Set(students.map(s => s.class_name))];
@@ -841,18 +827,14 @@ function renderClassManager() {
             <div class="admin-item-meta">학생 ${count}명</div>
           </div>
           <div class="admin-item-actions">
-            <button class="icon-btn" data-action="rename" data-class="${escapeHtml(cls)}" title="이름 변경">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
+            <button class="icon-btn" data-action="rename" data-class="${escapeHtml(cls)}" title="이름 변경"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
           </div>
         </div>`;
     });
   }
   html += `<div style="padding:24px;"><div style="font-size:13px;color:#888;margin-bottom:8px;">💡 팁</div><div style="font-size:12px;color:#666;line-height:1.6;">새 반은 [학생]에서 학생을 추가할 때 자동으로 생성됩니다.</div></div>`;
   content.innerHTML = html;
-  content.querySelectorAll('[data-action="rename"]').forEach(btn => {
-    btn.onclick = () => renameClass(btn.dataset.class);
-  });
+  content.querySelectorAll('[data-action="rename"]').forEach(btn => { btn.onclick = () => renameClass(btn.dataset.class); });
 }
 
 async function renameClass(oldName) {
@@ -872,15 +854,9 @@ async function renameClass(oldName) {
   }
 }
 
-// ===== 작품 관리 =====
 function renderArtworkManager() {
   const content = document.getElementById('adminContent');
-  let html = `
-    <div class="admin-section-header">
-      <div class="admin-section-title">전체 작품 (${artworks.length}개)</div>
-      <button class="add-btn" id="addArtworkBtn">+ 작품 업로드</button>
-    </div>`;
-
+  let html = `<div class="admin-section-header"><div class="admin-section-title">전체 작품 (${artworks.length}개)</div><button class="add-btn" id="addArtworkBtn">+ 작품 업로드</button></div>`;
   if (artworks.length === 0) {
     html += '<div class="empty-state"><div class="big-icon">🎨</div>등록된 작품이 없습니다.<br>+ 작품 업로드 버튼을 눌러주세요.</div>';
   } else {
@@ -896,17 +872,12 @@ function renderArtworkManager() {
             <div class="admin-item-meta">${student ? escapeHtml(student.name) : '(삭제된 학생)'} · ${formatDate(a.created_at)}</div>
           </div>
           <div class="admin-item-actions">
-            <button class="icon-btn" data-action="edit" data-id="${a.id}" title="수정">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            <button class="icon-btn danger" data-action="delete" data-id="${a.id}" title="삭제">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-            </button>
+            <button class="icon-btn" data-action="edit" data-id="${a.id}" title="수정"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn danger" data-action="delete" data-id="${a.id}" title="삭제"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
           </div>
         </div>`;
     });
   }
-
   content.innerHTML = html;
   document.getElementById('addArtworkBtn').onclick = () => showArtworkForm();
   content.querySelectorAll('[data-action]').forEach(btn => {
@@ -923,16 +894,13 @@ function renderArtworkManager() {
 function showArtworkForm(artwork = null) {
   const isEdit = !!artwork;
   const content = document.getElementById('adminContent');
-
   if (students.length === 0) {
     content.innerHTML = '<div class="empty-state">먼저 학생을 등록해주세요.</div>';
     return;
   }
-
   content.innerHTML = `
     <div style="padding:24px;">
       <div style="font-size:16px;font-weight:700;margin-bottom:20px;">${isEdit ? '작품 수정' : '작품 업로드'}</div>
-      
       <div class="form-group">
         <label class="form-label">이미지 ${isEdit ? '' : '*'}</label>
         <div class="upload-area ${isEdit ? 'has-image' : ''}" id="uploadArea">
@@ -945,33 +913,34 @@ function showArtworkForm(artwork = null) {
         ${isEdit ? '<div style="font-size:11px;color:#888;margin-top:6px;">※ 이미지를 변경하려면 위 이미지를 탭하세요</div>' : ''}
       </div>
 
+      <button class="ai-analyze-btn" id="aiAnalyzeBtn" type="button" disabled>
+        <span class="ai-icon">🤖</span>
+        <span id="aiAnalyzeBtnText">AI로 분석하기</span>
+      </button>
+      <div class="ai-hint">이미지를 선택한 후 클릭하면 <strong>AI가 제목·설명·주제·태그를 자동 작성</strong>합니다</div>
+
       <div class="form-group">
         <label class="form-label">학생 *</label>
         <select class="form-select" id="fStudent">
           ${students.map(s => `<option value="${s.id}" ${artwork && artwork.student_id === s.id ? 'selected':''}>${escapeHtml(s.name)} (${escapeHtml(s.class_name)})</option>`).join('')}
         </select>
       </div>
-
       <div class="form-group">
         <label class="form-label">제목</label>
         <input type="text" class="form-input" id="fTitle" value="${artwork ? escapeHtml(artwork.title || '') : ''}" placeholder="예: 정물 연구 - 사과와 항아리" />
       </div>
-
       <div class="form-group">
         <label class="form-label">수업 주제</label>
         <input type="text" class="form-input" id="fSubject" value="${artwork ? escapeHtml(artwork.subject || '') : ''}" placeholder="예: 기초 디자인, 발상과 표현" />
       </div>
-
       <div class="form-group">
         <label class="form-label">설명 / 코멘트</label>
         <textarea class="form-textarea" id="fDescription" placeholder="작품에 대한 설명이나 강사 코멘트를 입력하세요">${artwork ? escapeHtml(artwork.description || '') : ''}</textarea>
       </div>
-
       <div class="form-group">
         <label class="form-label">태그 (쉼표로 구분)</label>
         <input type="text" class="form-input" id="fTags" value="${artwork && artwork.tags ? escapeHtml(artwork.tags.join(', ')) : ''}" placeholder="예: 우수작, 입시포트폴리오, 정물화" />
       </div>
-
       <div class="form-buttons">
         <button class="form-btn" id="fCancel">취소</button>
         <button class="form-btn primary" id="fSave">${isEdit ? '수정' : '업로드'}</button>
@@ -980,8 +949,26 @@ function showArtworkForm(artwork = null) {
 
   const uploadArea = document.getElementById('uploadArea');
   const fImage = document.getElementById('fImage');
+  const aiBtn = document.getElementById('aiAnalyzeBtn');
+  const aiBtnText = document.getElementById('aiAnalyzeBtnText');
   let selectedFile = null;
   let imageDataUrl = null;
+  let imageBase64 = null;
+  let imageMimeType = null;
+
+  // 수정 모드: 기존 이미지가 있으면 AI 버튼 활성화
+  if (isEdit && artwork.image_url) {
+    aiBtn.disabled = false;
+    // 기존 이미지 URL을 가져와서 base64로 변환 (AI 분석 가능)
+    fetch(artwork.image_url).then(r => r.blob()).then(blob => {
+      imageMimeType = blob.type;
+      const reader = new FileReader();
+      reader.onload = e => {
+        imageBase64 = e.target.result.split(',')[1];
+      };
+      reader.readAsDataURL(blob);
+    }).catch(() => {});
+  }
 
   uploadArea.onclick = () => fImage.click();
 
@@ -991,13 +978,64 @@ function showArtworkForm(artwork = null) {
     if (!file.type.startsWith('image/')) { showToast('이미지 파일만 업로드 가능합니다'); return; }
     if (file.size > 10 * 1024 * 1024) { showToast('파일 크기는 10MB 이하여야 합니다'); return; }
     selectedFile = file;
+    imageMimeType = file.type;
     const reader = new FileReader();
     reader.onload = (ev) => {
       imageDataUrl = ev.target.result;
+      imageBase64 = imageDataUrl.split(',')[1];
       uploadArea.classList.add('has-image');
       uploadArea.innerHTML = `<img class="upload-preview" src="${imageDataUrl}" />`;
+      aiBtn.disabled = false;
     };
     reader.readAsDataURL(file);
+  };
+
+  // AI 분석 버튼
+  aiBtn.onclick = async () => {
+    if (!imageBase64) { showToast('이미지를 먼저 선택해주세요'); return; }
+    
+    aiBtn.disabled = true;
+    aiBtnText.textContent = 'AI 분석 중... (5~10초)';
+    aiBtn.innerHTML = `<span class="ai-spinner"></span><span>AI 분석 중... (5~10초)</span>`;
+
+    try {
+      const studentId = parseInt(document.getElementById('fStudent').value);
+      const student = students.find(s => s.id === studentId);
+
+      const response = await fetch(AI_FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify({
+          imageBase64,
+          mimeType: imageMimeType,
+          studentInfo: student ? { name: student.name, grade: student.grade, school: student.school, class_name: student.class_name } : null
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || `HTTP ${response.status}`);
+      }
+
+      // 결과 채워넣기
+      if (data.title) document.getElementById('fTitle').value = data.title;
+      if (data.subject) document.getElementById('fSubject').value = data.subject;
+      if (data.description) document.getElementById('fDescription').value = data.description;
+      if (data.tags && data.tags.length > 0) document.getElementById('fTags').value = data.tags.join(', ');
+
+      showToast('✨ AI 분석 완료! 내용을 검토하고 수정해주세요');
+    } catch (err) {
+      console.error('AI analyze error:', err);
+      showToast('AI 분석 실패: ' + (err.message || err));
+    } finally {
+      aiBtn.disabled = false;
+      aiBtn.innerHTML = `<span class="ai-icon">🤖</span><span>AI로 분석하기</span>`;
+    }
   };
 
   document.getElementById('fCancel').onclick = renderArtworkManager;
@@ -1019,28 +1057,18 @@ function showArtworkForm(artwork = null) {
 
     try {
       let imageUrl = artwork ? artwork.image_url : null;
-
       if (selectedFile) {
-        // 파일 업로드
         const ext = selectedFile.name.split('.').pop();
         const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
-        const { data: uploadData, error: uploadError } = await db.storage
-          .from('artworks')
-          .upload(fileName, selectedFile, { cacheControl: '3600', upsert: false });
+        const { error: uploadError } = await db.storage.from('artworks').upload(fileName, selectedFile, { cacheControl: '3600', upsert: false });
         if (uploadError) throw uploadError;
-
         const { data: urlData } = db.storage.from('artworks').getPublicUrl(fileName);
         imageUrl = urlData.publicUrl;
-
-        // 기존 이미지가 있으면 삭제 (수정 시)
         if (isEdit && artwork.image_url) {
           const oldPath = artwork.image_url.split('/artworks/').pop();
-          if (oldPath) {
-            await db.storage.from('artworks').remove([oldPath]).catch(()=>{});
-          }
+          if (oldPath) await db.storage.from('artworks').remove([oldPath]).catch(()=>{});
         }
       }
-
       const payload = {
         student_id: studentId,
         image_url: imageUrl,
@@ -1049,7 +1077,6 @@ function showArtworkForm(artwork = null) {
         description: description || null,
         tags: tags.length > 0 ? tags : null
       };
-
       if (isEdit) {
         const { error } = await db.from('artworks').update(payload).eq('id', artwork.id);
         if (error) throw error;
@@ -1059,7 +1086,6 @@ function showArtworkForm(artwork = null) {
         if (error) throw error;
         showToast('✓ 작품이 업로드되었습니다');
       }
-
       await loadData();
       renderArtworkManager();
     } catch (err) {
@@ -1074,14 +1100,10 @@ function showArtworkForm(artwork = null) {
 async function deleteArtwork(artwork) {
   if (!confirm('이 작품을 삭제하시겠습니까?')) return;
   try {
-    // Storage에서 이미지 삭제
     if (artwork.image_url) {
       const path = artwork.image_url.split('/artworks/').pop();
-      if (path) {
-        await db.storage.from('artworks').remove([path]).catch(()=>{});
-      }
+      if (path) await db.storage.from('artworks').remove([path]).catch(()=>{});
     }
-    // DB에서 작품 삭제
     const { error } = await db.from('artworks').delete().eq('id', artwork.id);
     if (error) throw error;
     showToast('✓ 삭제되었습니다');
@@ -1094,7 +1116,6 @@ async function deleteArtwork(artwork) {
   }
 }
 
-// ===== 출결 기록 =====
 async function renderRecordViewer() {
   const content = document.getElementById('adminContent');
   const today = getTodayKey();
@@ -1130,10 +1151,7 @@ async function loadRecords(date) {
       <div class="summary-card"><div class="summary-num green">${present}</div><div class="summary-label">출석</div></div>
       <div class="summary-card"><div class="summary-num red">${absent}</div><div class="summary-label">결석</div></div>
       <div class="summary-card"><div class="summary-num gray">${none}</div><div class="summary-label">미체크</div></div>`;
-    if (students.length === 0) {
-      list.innerHTML = '<div class="empty-state">학생이 없습니다.</div>';
-      return;
-    }
+    if (students.length === 0) { list.innerHTML = '<div class="empty-state">학생이 없습니다.</div>'; return; }
     const classes = [...new Set(students.map(s => s.class_name))];
     let html = '';
     classes.forEach(cls => {
