@@ -4751,7 +4751,7 @@ function deleteAllSchoolRecords(schoolName) {
 }
 
 // ============ AI 채팅 (Google Gemini) ============
-const AI_KEY_STORAGE = 'hi5_centum_gemini_key_v1';
+const AI_KEY_STORAGE = 'hi5_centum_groq_key_v1';
 const AI_HISTORY_STORAGE = 'hi5_centum_ai_history_v1';
 let aiChatHistory = [];
 let pendingAiAction = null;
@@ -4774,17 +4774,18 @@ function openAiChat() {
     if (!apiKey) {
       addAiMessage('bot', `안녕하세요! AI 자동 입력 기능이에요 🤖
 
-처음 사용하시려면 Google Gemini API 키가 필요해요. **무료**예요!
+처음 사용하시려면 Groq API 키가 필요해요. **무료**예요!
 
 📌 발급 방법:
-1. https://aistudio.google.com/app/apikey 접속
-2. Google 계정 로그인
-3. "Create API key" 클릭
-4. 키 복사
+1. https://console.groq.com 접속
+2. 로그인
+3. 왼쪽 메뉴 "API Keys" 클릭
+4. "Create API Key" 클릭
+5. 키 복사 (gsk_로 시작)
 
 키를 발급받으셨으면 입력칸에 붙여넣어주세요.
 
-(예: AIzaSy로 시작하는 39자리 문자열)`, 'welcome');
+(예: gsk_로 시작하는 문자열)`, 'welcome');
     } else {
       addAiMessage('bot', `안녕하세요! 🤖
 
@@ -4849,7 +4850,7 @@ async function sendAiMessage() {
   
   // API 키 처리
   if (!getAiApiKey()) {
-    if (text.startsWith('AIzaSy') && text.length > 30) {
+    if (text.startsWith('gsk_') && text.length > 30) {
       saveAiApiKey(text);
       input.value = '';
       addAiMessage('user', '••••••••••••• (API 키 저장됨)');
@@ -4858,7 +4859,7 @@ async function sendAiMessage() {
       return;
     } else {
       addAiMessage('user', text);
-      addAiMessage('bot', '❌ API 키 형식이 맞지 않아요. AIzaSy로 시작하는 39자리 문자열을 입력해주세요.', 'error');
+      addAiMessage('bot', '❌ API 키 형식이 맞지 않아요. gsk_로 시작하는 문자열을 입력해주세요.', 'error');
       input.value = '';
       sendBtn.disabled = false;
       return;
@@ -4870,7 +4871,7 @@ async function sendAiMessage() {
   addAiLoading();
   
   try {
-    const result = await callGeminiAi(text);
+    const result = await callGroqAi(text);
     removeAiLoading();
     
     if (result.error) {
@@ -4889,7 +4890,7 @@ async function sendAiMessage() {
   sendBtn.disabled = false;
 }
 
-async function callGeminiAi(userInput) {
+async function callGroqAi(userInput) {
   const apiKey = getAiApiKey();
   
   // 컨텍스트 정보 모으기
@@ -4917,7 +4918,7 @@ ${schoolList}
 다음 JSON 형식으로만 응답하세요. 절대 다른 텍스트 추가하지 마세요:
 
 {
-  "action": "add_record" | "delete_record" | "add_schedule" | "edit_schedule" | "query" | "unclear",
+  "action": "add_record" | "delete_record" | "add_schedule" | "edit_schedule" | "delete_schedule" | "query" | "unclear",
   "date": "YYYY-MM-DD",
   "school": "학교명",
   "activities": [{"itemId": "품목id", "qty": 숫자, "staffId": "담당자id"}],
@@ -4930,42 +4931,47 @@ ${schoolList}
 2. 품목/담당자/학교 이름이 등록된 것과 매칭 안 되면 가장 비슷한 것 선택. 없으면 unclear로 응답
 3. 학교명은 등록된 정확한 이름 사용 (예: "해강중학교"는 "해강중"으로)
 4. 수량은 숫자만 (예: "200권" → 200)
-5. 삭제 요청이면 action: "delete_record"
+5. 활동 기록 삭제 요청이면 action: "delete_record" (예: "어제 해강초 노트 기록 지워줘")
 6. 일정 추가면 action: "add_schedule" + activities는 운영 품목 목록
-7. 통계 질문이면 action: "query" + message에 답변
-8. 애매하면 action: "unclear" + message에 무엇이 부족한지 설명`;
+7. **일정에서 학교 빼기 / 일정 삭제는 action: "delete_schedule"** (예: "12일 일정에서 해림초 빼줘", "12일에서 해림초 안보이게", "12일 일정 다 삭제해줘"). school 지정 시 해당 학교만, school 없으면 그 날짜 전체 일정 삭제
+8. 일정 수정(학교/품목 추가)이면 action: "edit_schedule"
+9. 통계 질문이면 action: "query" + message에 답변
+10. 애매하면 action: "unclear" + message에 무엇이 부족한지 설명`;
   
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const url = 'https://api.groq.com/openai/v1/chat/completions';
   
   const body = {
-    contents: [
-      {
-        role: 'user',
-        parts: [{ text: systemPrompt + '\n\n사용자 입력: ' + userInput }]
-      }
+    model: 'llama-3.3-70b-versatile',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userInput }
     ],
-    generationConfig: {
-      temperature: 0.3,
-      responseMimeType: 'application/json'
-    }
+    temperature: 0.3,
+    response_format: { type: 'json_object' }
   };
   
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
     body: JSON.stringify(body)
   });
   
   if (!res.ok) {
     const errText = await res.text();
-    if (res.status === 400 || res.status === 403) {
-      return { error: 'API 키가 잘못됐거나 사용 한도를 초과했어요. (key를 다시 확인해주세요)' };
+    if (res.status === 401) {
+      return { error: 'API 키가 잘못됐어요. console.groq.com 에서 확인해주세요.' };
+    }
+    if (res.status === 429) {
+      return { error: '잠시 후 다시 시도해주세요. (요청 한도 초과)' };
     }
     return { error: `API 호출 실패 (${res.status})` };
   }
   
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = data.choices?.[0]?.message?.content || '';
   
   try {
     return JSON.parse(text);
@@ -4997,6 +5003,7 @@ function handleAiResponse(result) {
   else if (result.action === 'delete_record') actionTitle = '🗑️ 기록 삭제';
   else if (result.action === 'add_schedule') actionTitle = '📅 일정 추가';
   else if (result.action === 'edit_schedule') actionTitle = '✏️ 일정 수정';
+  else if (result.action === 'delete_schedule') actionTitle = '🗑️ 일정 삭제';
   
   card.innerHTML = `
     <div class="ai-action-card-title">${actionTitle}</div>
@@ -5113,6 +5120,61 @@ function confirmAiAction() {
       saveCalendar(calendar);
       addAiMessage('bot', `✅ ${a.date}에 일정이 추가됐어요!`);
       renderAll();
+    }
+    else if (a.action === 'delete_schedule') {
+      // 일정 자체를 삭제 (학교 단위 또는 전체 날짜)
+      if (!calendar[a.date]) {
+        addAiMessage('bot', `❌ ${a.date}에 일정이 없어요.`, 'error');
+      } else if (a.school) {
+        // 특정 학교만 일정에서 빼기
+        const schools = calendar[a.date].schools || [];
+        const idx = schools.indexOf(a.school);
+        if (idx === -1) {
+          addAiMessage('bot', `❌ ${a.date} 일정에 ${a.school}이(가) 없어요.`, 'error');
+        } else {
+          schools.splice(idx, 1);
+          calendar[a.date].schools = schools;
+          // 학교가 0개 남으면 그 날짜 일정 자체 삭제
+          if (schools.length === 0) {
+            delete calendar[a.date];
+            addAiMessage('bot', `✅ ${a.date} 일정에서 ${a.school}을(를) 빼고, 빈 일정도 정리했어요!`);
+          } else {
+            addAiMessage('bot', `✅ ${a.date} 일정에서 ${a.school}을(를) 뺐어요!`);
+          }
+          // 해당 학교의 그 날짜 활동 기록도 삭제 옵션
+          const records = loadRecords();
+          const key = `${a.date}|${a.school}`;
+          if (records[key]) {
+            delete records[key];
+            saveRecords(records);
+          }
+          saveCalendar(calendar);
+          renderAll();
+        }
+      } else {
+        // 학교 미지정이면 그 날짜 전체 일정 삭제
+        delete calendar[a.date];
+        saveCalendar(calendar);
+        addAiMessage('bot', `✅ ${a.date} 일정 전체를 삭제했어요!`);
+        renderAll();
+      }
+    }
+    else if (a.action === 'edit_schedule') {
+      // 일정 수정 (학교 추가/제거, 운영품목 추가)
+      if (!calendar[a.date]) {
+        addAiMessage('bot', `❌ ${a.date}에 일정이 없어요. 먼저 일정 추가가 필요해요.`, 'error');
+      } else {
+        if (a.school && !calendar[a.date].schools.includes(a.school)) {
+          calendar[a.date].schools.push(a.school);
+        }
+        const newItems = (a.activities || []).map(x => x.itemId).filter(Boolean);
+        if (newItems.length > 0) {
+          calendar[a.date].items = [...new Set([...(calendar[a.date].items || []), ...newItems])];
+        }
+        saveCalendar(calendar);
+        addAiMessage('bot', `✅ ${a.date} 일정을 수정했어요!`);
+        renderAll();
+      }
     }
     else {
       addAiMessage('bot', `❓ 처리하지 못했어요. 다시 시도해주세요.`, 'error');
