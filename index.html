@@ -455,18 +455,44 @@
     <span class="tabbar-btn-icon">🎨</span>
     <span class="tabbar-btn-label">갤러리</span>
   </button>
+  <button class="tabbar-btn" data-page="notes">
+    <span class="tabbar-btn-icon">📬</span>
+    <span class="tabbar-btn-label">알림장</span>
+  </button>
   <button class="tabbar-btn" data-page="students">
     <span class="tabbar-btn-icon">👥</span>
     <span class="tabbar-btn-label">학생</span>
   </button>
-  <button class="tabbar-btn" data-page="teachers">
-    <span class="tabbar-btn-icon">👨‍🏫</span>
-    <span class="tabbar-btn-label">강사</span>
+  <button class="tabbar-btn" data-page="more" id="moreTabBtn">
+    <span class="tabbar-btn-icon">⋯</span>
+    <span class="tabbar-btn-label">더보기</span>
   </button>
-  <button class="tabbar-btn" data-page="records">
-    <span class="tabbar-btn-icon">📊</span>
-    <span class="tabbar-btn-label">기록</span>
-  </button>
+</div>
+
+<!-- 더보기 시트 (강사/기록) -->
+<div class="modal-overlay" id="moreSheet">
+  <div class="modal" style="max-width: 420px;">
+    <div class="modal-header">
+      <div class="modal-title">더보기</div>
+      <button class="modal-close" id="moreSheetClose">×</button>
+    </div>
+    <div style="padding: 16px;">
+      <button class="more-item" data-page="teachers" style="width:100%;display:flex;align-items:center;gap:14px;padding:18px 16px;background:#fafafa;border:1px solid #eaeaea;border-radius:12px;margin-bottom:10px;cursor:pointer;text-align:left;transition:all 0.15s;">
+        <span style="font-size:24px;">👨‍🏫</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1a1a1a;">강사 관리</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">강사별 AI 톤·프로필 설정</div>
+        </div>
+      </button>
+      <button class="more-item" data-page="records" style="width:100%;display:flex;align-items:center;gap:14px;padding:18px 16px;background:#fafafa;border:1px solid #eaeaea;border-radius:12px;cursor:pointer;text-align:left;transition:all 0.15s;">
+        <span style="font-size:24px;">📊</span>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#1a1a1a;">출결 기록</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;">일별·월별 통계, 엑셀 다운로드</div>
+        </div>
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- 작품 상세 모달 -->
@@ -665,9 +691,41 @@ document.querySelectorAll('.tabbar-btn').forEach(btn => {
       if (!confirm('저장하지 않은 출결 변경사항이 있습니다. 이동하시겠습니까?')) return;
       pendingChanges = {};
     }
-    currentPage = btn.dataset.page;
+    const target = btn.dataset.page;
+    // '더보기' 탭은 시트만 열고 페이지 전환은 안 함
+    if (target === 'more') {
+      document.getElementById('moreSheet').classList.add('show');
+      return;
+    }
+    currentPage = target;
     selectedStudent = null;
     document.querySelectorAll('.tabbar-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderPage();
+  };
+});
+
+// ============ 더보기 시트 ============
+document.getElementById('moreSheetClose').onclick = () => {
+  document.getElementById('moreSheet').classList.remove('show');
+};
+document.getElementById('moreSheet').onclick = (e) => {
+  if (e.target.id === 'moreSheet') {
+    document.getElementById('moreSheet').classList.remove('show');
+  }
+};
+document.querySelectorAll('.more-item').forEach(item => {
+  item.onclick = () => {
+    if (currentPage === 'attendance' && Object.keys(pendingChanges).length > 0) {
+      if (!confirm('저장하지 않은 출결 변경사항이 있습니다. 이동하시겠습니까?')) return;
+      pendingChanges = {};
+    }
+    currentPage = item.dataset.page;
+    selectedStudent = null;
+    // 탭바에서 '더보기' 버튼만 활성화 표시 (강사/기록은 더보기 안에 있음)
+    document.querySelectorAll('.tabbar-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.page === 'more');
+    });
+    document.getElementById('moreSheet').classList.remove('show');
     renderPage();
   };
 });
@@ -688,9 +746,25 @@ function renderPage() {
 
   if (currentPage === 'attendance') renderAttendancePage();
   else if (currentPage === 'gallery') renderGalleryPage();
+  else if (currentPage === 'notes') renderNotesPage();
   else if (currentPage === 'students') renderStudentsPage();
   else if (currentPage === 'teachers') renderTeachersPage();
   else if (currentPage === 'records') renderRecordsPage();
+}
+
+// ============ [알림장 페이지] (준비 중) ============
+function renderNotesPage() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="padding: 80px 24px; text-align: center; color: #888;">
+      <div style="font-size: 56px; margin-bottom: 20px;">📬</div>
+      <div style="font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">알림장 기능 준비 중</div>
+      <div style="font-size: 13px; line-height: 1.7;">
+        다음 단계에서 알림장 작성·발송 기능이<br>
+        활성화됩니다.
+      </div>
+    </div>
+  `;
 }
 
 // ============ [출결 페이지] ============
