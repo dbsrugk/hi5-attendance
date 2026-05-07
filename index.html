@@ -560,6 +560,28 @@
   </div>
 </div>
 
+<!-- 빠른 발송 모달 (작품·출결 등 다용도) -->
+<div class="modal-overlay" id="quickSendModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <div class="modal-title">📤 학부모 발송</div>
+      <button class="modal-close" id="quickSendModalClose">×</button>
+    </div>
+    <div id="quickSendModalBody"></div>
+  </div>
+</div>
+
+<!-- 발송 결과 모달 (링크 공유) -->
+<div class="modal-overlay" id="sendResultModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <div class="modal-title">발송 완료</div>
+      <button class="modal-close" id="sendResultModalClose">×</button>
+    </div>
+    <div id="sendResultModalBody"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast">저장되었습니다</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -842,7 +864,7 @@ function renderNotesPage() {
   let html = `
     <div class="page-title-row">
       <div class="page-title">알림장</div>
-      <button class="page-action-btn" id="newNoteBtn">+ 새 알림장</button>
+      <button class="page-action-btn" id="newNoteBtn">+ 자유 알림장</button>
     </div>
     <div class="notes-toolbar">
       <input type="text" class="notes-search" id="notesSearchInput" placeholder="🔍 학생명·반·제목으로 검색" value="${escapeHtml(notesSearch)}" />
@@ -859,8 +881,8 @@ function renderNotesPage() {
       html += `
         <div class="notes-empty">
           <div class="ic">📬</div>
-          <div class="ttl">아직 작성된 알림장이 없습니다</div>
-          <div class="desc">우측 상단 [+ 새 알림장] 버튼으로<br>첫 알림장을 작성해보세요.</div>
+          <div class="ttl">발송된 알림장이 없습니다</div>
+          <div class="desc">갤러리에서 작품을 학부모에게 발송하거나,<br>출결 화면에서 알림을 보낼 수 있습니다.<br>또는 우측 상단 [+ 자유 알림장]으로 직접 작성하세요.</div>
         </div>`;
     } else {
       html += `
@@ -969,7 +991,7 @@ function showNoteForm(note = null) {
   const content = document.getElementById('content');
 
   if (students.length === 0) {
-    content.innerHTML = '<div class="page-title-row"><div class="page-title">알림장 작성</div></div><div class="empty-state">먼저 학생을 등록해주세요.</div>';
+    content.innerHTML = '<div class="page-title-row"><div class="page-title">자유 알림장</div></div><div class="empty-state">먼저 학생을 등록해주세요.</div>';
     return;
   }
 
@@ -985,7 +1007,12 @@ function showNoteForm(note = null) {
 
   content.innerHTML = `
     <div class="page-title-row">
-      <div class="page-title">${isEdit ? '알림장 수정' : '새 알림장'}</div>
+      <div class="page-title">${isEdit ? '알림장 수정' : '자유 알림장'}</div>
+    </div>
+
+    <div style="background:#fff5f3;padding:12px 16px;border-bottom:1px solid #f0d4cf;font-size:11px;color:#888;line-height:1.5;">
+      💡 작품 알림은 <strong>갤러리</strong>에서, 출결 알림은 <strong>출결 화면</strong>에서<br>
+      더 빠르게 보낼 수 있습니다. 여기는 자유 메시지·공지 전용입니다.
     </div>
 
     <div class="note-form-section">
@@ -1016,30 +1043,23 @@ function showNoteForm(note = null) {
 
     <div class="note-form-section">
       <label class="form-label">제목 *</label>
-      <input type="text" class="form-input" id="fNoteTitle" placeholder="예: 오늘의 작품 / 다음 주 재료 안내" />
+      <input type="text" class="form-input" id="fNoteTitle" placeholder="예: 다음 주 재료 안내 / 면담 일정" />
 
       <label class="form-label" style="margin-top:14px;">본문</label>
       <textarea class="form-textarea" id="fNoteBody" placeholder="학부모에게 전달할 내용을 자유롭게 입력하세요"></textarea>
     </div>
 
     <div class="note-form-blocks">
-      <label class="form-label" style="font-size:11px;font-weight:700;color:#888;letter-spacing:0.3px;display:block;margin-bottom:8px;">첨부</label>
+      <label class="form-label" style="font-size:11px;font-weight:700;color:#888;letter-spacing:0.3px;display:block;margin-bottom:8px;">사진 첨부 (선택)</label>
       <div class="note-block-add-row">
-        <button class="note-block-add-btn" id="addArtworkBlock" type="button">
-          <span class="ic">🎨</span><span>작품 첨부</span>
-        </button>
-        <button class="note-block-add-btn" id="addAttendanceBlock" type="button">
-          <span class="ic">📋</span><span>출결 첨부</span>
-        </button>
-        <button class="note-block-add-btn" id="addImageBlock" type="button">
-          <span class="ic">🖼️</span><span>이미지 첨부</span>
+        <button class="note-block-add-btn" id="addImageBlock" type="button" style="flex: none; width: 100%;">
+          <span class="ic">🖼️</span><span>사진 추가하기</span>
         </button>
       </div>
       <div id="noteBlocksList"></div>
     </div>
 
     <input type="file" id="noteImageFileInput" accept="image/*" style="display:none;" />
-    <input type="file" id="noteArtworkFileInput" accept="image/*" style="display:none;" />
 
     <div class="note-form-bottom">
       <button class="form-btn" id="fNoteCancel" type="button">취소</button>
@@ -1057,14 +1077,10 @@ function showNoteForm(note = null) {
     };
   });
 
-  // 첨부 버튼들
-  document.getElementById('addArtworkBlock').onclick = () => {
-    document.getElementById('noteArtworkFileInput').click();
-  };
+  // 사진 첨부
   document.getElementById('addImageBlock').onclick = () => {
     document.getElementById('noteImageFileInput').click();
   };
-  document.getElementById('addAttendanceBlock').onclick = handleAddAttendanceBlock;
 
   // 이미지 첨부 (일반)
   document.getElementById('noteImageFileInput').onchange = async (e) => {
@@ -1081,20 +1097,11 @@ function showNoteForm(note = null) {
         order_index: noteFormBlocks.length
       });
       renderNoteFormBlocks();
-      showToast('✓ 이미지가 추가되었습니다');
+      showToast('✓ 사진이 추가되었습니다');
     } catch (err) {
       console.error(err);
       showToast('업로드 실패: ' + (err.message || err));
     }
-  };
-
-  // 작품 첨부 (업로드 → AI 분석 → artworks 테이블 저장 → 블록에 artwork_id 등록)
-  document.getElementById('noteArtworkFileInput').onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast('이미지 파일만 가능합니다'); return; }
-    e.target.value = '';
-    await handleAddArtworkBlock(file);
   };
 
   // 취소 / 저장
@@ -1605,12 +1612,19 @@ function showArtworkDetail(artwork) {
         ${artwork.description ? `<div class="artwork-description">${escapeHtml(artwork.description)}</div>` : ''}
         ${artwork.tags && artwork.tags.length > 0 ? `<div class="artwork-tags">${artwork.tags.map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join('')}</div>` : ''}
       </div>
-      <div class="artwork-actions">
-        <button class="form-btn" id="artworkEdit">수정</button>
-        <button class="form-btn" id="artworkDelete" style="color:#c0392b;border-color:#c0392b;">삭제</button>
+      <div class="artwork-actions" style="flex-direction:column;gap:8px;">
+        <button class="form-btn primary" id="artworkSend" style="width:100%;">📤 학부모에게 발송</button>
+        <div style="display:flex;gap:8px;width:100%;">
+          <button class="form-btn" id="artworkEdit" style="flex:1;">수정</button>
+          <button class="form-btn" id="artworkDelete" style="flex:1;color:#c0392b;border-color:#c0392b;">삭제</button>
+        </div>
       </div>
     </div>`;
   modal.classList.add('show');
+  document.getElementById('artworkSend').onclick = () => {
+    modal.classList.remove('show');
+    showArtworkSendModal(artwork);
+  };
   document.getElementById('artworkEdit').onclick = () => {
     modal.classList.remove('show');
     showArtworkForm(artwork);
@@ -1622,6 +1636,203 @@ function showArtworkDetail(artwork) {
   };
 }
 document.getElementById('artworkModalClose').onclick = () => document.getElementById('artworkModal').classList.remove('show');
+document.getElementById('quickSendModalClose').onclick = () => document.getElementById('quickSendModal').classList.remove('show');
+document.getElementById('sendResultModalClose').onclick = () => document.getElementById('sendResultModal').classList.remove('show');
+
+// ============ [작품 빠른 발송 모달] ============
+function showArtworkSendModal(artwork) {
+  const student = students.find(s => s.id === artwork.student_id);
+  const teacher = artwork.teacher_id ? teachers.find(t => t.id === artwork.teacher_id) : null;
+  const modal = document.getElementById('quickSendModal');
+  const body = document.getElementById('quickSendModalBody');
+
+  // 기본 제목/본문 자동 채움 (강사 톤이 들어간 코멘트 활용)
+  const defaultTitle = artwork.title || '학생 작품 안내';
+  const defaultBody = artwork.description || '';
+
+  body.innerHTML = `
+    <div style="padding:16px 20px;">
+      <div style="display:flex;gap:12px;margin-bottom:14px;background:#fafafa;padding:10px;border-radius:8px;">
+        <img src="${escapeHtml(artwork.image_url)}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;flex-shrink:0;" />
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(artwork.title || '제목 없음')}</div>
+          <div style="font-size:11px;color:#c0392b;font-weight:700;">${student ? escapeHtml(student.name) + ' · ' + escapeHtml(student.class_name) : ''}</div>
+          ${teacher ? `<div style="font-size:10px;color:#888;margin-top:2px;">✍️ ${escapeHtml(teacher.name)}쌤 분석</div>` : ''}
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:#888;background:#fff5f3;padding:8px 12px;border-radius:6px;margin-bottom:14px;line-height:1.5;">
+        💌 <strong>${student ? escapeHtml(student.name) : ''}</strong> 학부모님께 이 작품과 코멘트를 발송합니다.
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="font-size:11px;font-weight:700;color:#888;letter-spacing:0.3px;">제목</label>
+        <input type="text" class="form-input" id="qsTitle" value="${escapeHtml(defaultTitle)}" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="font-size:11px;font-weight:700;color:#888;letter-spacing:0.3px;">메시지 (선택)</label>
+        <textarea class="form-textarea" id="qsBody" placeholder="추가하실 메모가 있다면 입력하세요&#10;(비워두면 작품 코멘트만 발송됩니다)"></textarea>
+        <div style="font-size:10px;color:#aaa;margin-top:4px;">※ 작품 코멘트는 자동으로 함께 발송됩니다</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="form-btn" id="qsCancel">취소</button>
+        <button class="form-btn primary" id="qsSend">📤 발송하기</button>
+      </div>
+    </div>
+  `;
+  modal.classList.add('show');
+
+  document.getElementById('qsCancel').onclick = () => modal.classList.remove('show');
+
+  document.getElementById('qsSend').onclick = async () => {
+    const title = document.getElementById('qsTitle').value.trim();
+    const body = document.getElementById('qsBody').value.trim();
+    if (!title) { showToast('제목을 입력해주세요'); return; }
+    if (!student) { showToast('학생 정보를 찾을 수 없습니다'); return; }
+
+    const sendBtn = document.getElementById('qsSend');
+    sendBtn.disabled = true;
+    sendBtn.textContent = '발송 중...';
+
+    try {
+      // 토큰 생성 (중복 방지)
+      let shareToken;
+      let attempts = 0;
+      while (attempts < 5) {
+        shareToken = generateShareToken();
+        const { data: existing } = await db.from('notes').select('id').eq('share_token', shareToken).maybeSingle();
+        if (!existing) break;
+        attempts++;
+      }
+
+      // notes 생성
+      const { data: insertedNote, error: nErr } = await db.from('notes').insert({
+        recipient_type: 'student',
+        student_id: student.id,
+        teacher_id: artwork.teacher_id || null,
+        title: title,
+        body: body || null,
+        share_token: shareToken,
+        is_draft: false
+      }).select().single();
+      if (nErr) throw nErr;
+
+      // 작품 블록 추가
+      const { error: bErr } = await db.from('note_blocks').insert({
+        note_id: insertedNote.id,
+        block_type: 'artwork',
+        artwork_id: artwork.id,
+        order_index: 0
+      });
+      if (bErr) throw bErr;
+
+      // 링크 생성 → 결과 화면 표시 (자동 복사는 실패할 수 있어 사용자 클릭 방식으로)
+      const link = `${window.location.origin}/n/${shareToken}`;
+      showSendResultModal(link, student.name);
+
+      await loadData();
+      // 현재 페이지가 갤러리면 그대로 유지 (학생 갤러리 새로고침은 자동)
+      if (currentPage === 'gallery' && selectedStudent) {
+        renderStudentGallery(selectedStudent);
+      } else {
+        renderPage();
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('발송 실패: ' + (err.message || err));
+      sendBtn.disabled = false;
+      sendBtn.textContent = '📤 발송하기';
+    }
+  };
+}
+
+// ============ [발송 결과 모달] - 링크 표시 + 복사·공유 ============
+function showSendResultModal(link, recipientName) {
+  // 기존 모달 닫기
+  document.getElementById('quickSendModal').classList.remove('show');
+
+  const modal = document.getElementById('sendResultModal');
+  const body = document.getElementById('sendResultModalBody');
+
+  body.innerHTML = `
+    <div style="padding:20px;">
+      <div style="text-align:center;margin-bottom:18px;">
+        <div style="font-size:48px;margin-bottom:8px;">✅</div>
+        <div style="font-size:16px;font-weight:800;color:#1a1a1a;margin-bottom:4px;">발송이 완료되었습니다</div>
+        <div style="font-size:12px;color:#888;">${escapeHtml(recipientName || '')} 학부모님에게 아래 링크를 전달해주세요</div>
+      </div>
+
+      <div style="background:#fafafa;border:1px solid #eaeaea;border-radius:8px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:10px;color:#888;font-weight:700;letter-spacing:0.3px;margin-bottom:6px;">📎 공유 링크</div>
+        <div id="sendResultLinkBox" style="font-size:13px;color:#1a1a1a;word-break:break-all;line-height:1.5;font-family:monospace;user-select:all;-webkit-user-select:all;background:#fff;padding:10px;border-radius:6px;border:1px solid #f0f0f0;">${escapeHtml(link)}</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button class="form-btn primary" id="srCopyBtn" style="flex:1;">📋 링크 복사</button>
+        <button class="form-btn" id="srKakaoBtn" style="flex:1;background:#fee500;border-color:#fee500;color:#1a1a1a;">💬 카톡으로 보내기</button>
+      </div>
+
+      <button class="form-btn" id="srCloseBtn" style="width:100%;margin-top:8px;">확인</button>
+
+      <div style="font-size:10px;color:#aaa;text-align:center;margin-top:10px;line-height:1.5;">
+        ※ 복사가 안 되면 위 링크를 길게 눌러 직접 복사하실 수 있습니다
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('show');
+
+  // 복사 버튼 (사용자 클릭 컨텍스트 안에서 실행되므로 성공률 높음)
+  document.getElementById('srCopyBtn').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      showToast('✓ 링크가 복사되었습니다');
+    } catch (err) {
+      // 폴백: textarea 만들어서 select + execCommand
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = link;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) {
+          showToast('✓ 링크가 복사되었습니다');
+        } else {
+          showToast('자동 복사가 안 됩니다. 링크를 길게 눌러 복사해주세요');
+        }
+      } catch (err2) {
+        showToast('자동 복사가 안 됩니다. 링크를 길게 눌러 복사해주세요');
+      }
+    }
+  };
+
+  // 카톡 보내기 (모바일 브라우저에서 카카오톡으로 텍스트 공유)
+  document.getElementById('srKakaoBtn').onclick = () => {
+    // Web Share API 우선 사용 (안드로이드/iOS 둘 다 지원)
+    if (navigator.share) {
+      navigator.share({
+        title: '하이파이브 미술학원 알림장',
+        text: `${recipientName || ''} 학부모님께 알림장이 도착했습니다.`,
+        url: link
+      }).catch(() => {});
+    } else {
+      // 폴백: 클립보드 복사 후 안내
+      navigator.clipboard.writeText(link).then(() => {
+        showToast('✓ 링크가 복사되었습니다. 카톡에 붙여넣기 해주세요');
+      }).catch(() => {
+        showToast('링크를 길게 눌러 복사 후 카톡에 붙여넣기 해주세요');
+      });
+    }
+  };
+
+  document.getElementById('srCloseBtn').onclick = () => modal.classList.remove('show');
+}
 
 // ============ [학생 페이지] ============
 function renderStudentsPage() {
@@ -1828,827 +2039,4 @@ function showTeacherForm(teacher = null) {
         <div style="font-size:11px;color:#888;margin-top:4px;">이름 뒤에 자동으로 "쌤"이 붙습니다 (예: 경학쌤)</div>
       </div>
       <div class="form-group">
-        <label class="form-label">AI 톤 스타일 *</label>
-        <textarea class="form-textarea" id="fTeacherTone" placeholder="예: 다정하지만 담백하게, 마무리는 따뜻한 응원으로">${teacher ? escapeHtml(teacher.ai_tone_style || '') : ''}</textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">자주 쓰는 말투/특징<span class="form-label-hint">(선택)</span></label>
-        <textarea class="form-textarea" id="fTeacherStyle" placeholder="예: '~습니다' 정중한 어미. 이모티콘은 ^^ 정도만.">${teacher ? escapeHtml(teacher.writing_style || '') : ''}</textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">샘플 코멘트 ⭐<span class="form-label-hint">(강추)</span></label>
-        <textarea class="form-textarea large" id="fTeacherSample" placeholder="실제 작성하셨던 작품 코멘트를 1~2개 붙여넣으세요.">${teacher ? escapeHtml(teacher.sample_comment || '') : ''}</textarea>
-        <div style="font-size:11px;color:#c0392b;margin-top:4px;font-weight:500;">⭐ 이 항목이 가장 중요합니다!</div>
-      </div>
-      <div class="form-group">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="fTeacherDefault" ${teacher && teacher.is_default ? 'checked' : ''} />
-          <span style="font-size:13px;font-weight:700;">기본 강사로 설정</span>
-        </label>
-        <div style="font-size:11px;color:#888;margin-top:4px;margin-left:24px;">작품 업로드 시 자동으로 선택됩니다 (1명만 가능)</div>
-      </div>
-      <div class="form-buttons">
-        <button class="form-btn" id="fCancel">취소</button>
-        <button class="form-btn primary" id="fSave">${isEdit ? '수정' : '추가'}</button>
-      </div>
-    </div>`;
-
-  const avatarArea = document.getElementById('teacherAvatarArea');
-  const avatarInput = document.getElementById('fTeacherAvatar');
-  let selectedAvatarFile = null;
-
-  avatarArea.onclick = () => avatarInput.click();
-  avatarInput.onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast('이미지 파일만 업로드 가능합니다'); return; }
-    if (file.size > 5 * 1024 * 1024) { showToast('파일 크기는 5MB 이하여야 합니다'); return; }
-    selectedAvatarFile = file;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      avatarArea.classList.add('has-image');
-      avatarArea.innerHTML = `<img class="upload-preview" src="${ev.target.result}" style="max-height:200px;" />`;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  document.getElementById('fCancel').onclick = renderTeachersPage;
-  document.getElementById('fSave').onclick = async () => {
-    const name = document.getElementById('fTeacherName').value.trim();
-    const ai_tone_style = document.getElementById('fTeacherTone').value.trim();
-    const writing_style = document.getElementById('fTeacherStyle').value.trim();
-    const sample_comment = document.getElementById('fTeacherSample').value.trim();
-    const is_default = document.getElementById('fTeacherDefault').checked;
-
-    if (!name) { showToast('이름을 입력해주세요'); return; }
-    if (!ai_tone_style) { showToast('AI 톤 스타일을 입력해주세요'); return; }
-
-    const saveBtn = document.getElementById('fSave');
-    saveBtn.disabled = true;
-    saveBtn.textContent = '저장 중...';
-
-    try {
-      let avatar_url = teacher ? teacher.avatar_url : null;
-      if (selectedAvatarFile) {
-        const ext = selectedAvatarFile.name.split('.').pop();
-        const fileName = `teacher_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
-        const { error: uploadError } = await db.storage.from('artworks').upload(fileName, selectedAvatarFile, { cacheControl: '3600', upsert: false });
-        if (uploadError) throw uploadError;
-        const { data: urlData } = db.storage.from('artworks').getPublicUrl(fileName);
-        avatar_url = urlData.publicUrl;
-        if (isEdit && teacher.avatar_url) {
-          const oldPath = teacher.avatar_url.split('/artworks/').pop();
-          if (oldPath) await db.storage.from('artworks').remove([oldPath]).catch(()=>{});
-        }
-      }
-
-      const payload = { name, ai_tone_style, writing_style, sample_comment, avatar_url, is_default };
-
-      if (is_default) {
-        await db.from('teachers').update({ is_default: false }).neq('id', isEdit ? teacher.id : -1);
-      }
-
-      if (isEdit) {
-        const { error } = await db.from('teachers').update(payload).eq('id', teacher.id);
-        if (error) throw error;
-        showToast('✓ 수정되었습니다');
-      } else {
-        const { error } = await db.from('teachers').insert(payload);
-        if (error) throw error;
-        showToast('✓ 추가되었습니다');
-      }
-      await loadData();
-    } catch (err) {
-      console.error(err);
-      showToast('실패: ' + (err.message || err));
-      saveBtn.disabled = false;
-      saveBtn.textContent = isEdit ? '수정' : '추가';
-    }
-  };
-}
-
-async function deleteTeacher(teacher) {
-  if (teachers.length <= 1) {
-    showToast('최소 1명의 강사는 등록되어 있어야 합니다');
-    return;
-  }
-  if (!confirm(`'${teacher.name}쌤'을 삭제하시겠습니까?`)) return;
-  try {
-    if (teacher.avatar_url) {
-      const path = teacher.avatar_url.split('/artworks/').pop();
-      if (path) await db.storage.from('artworks').remove([path]).catch(()=>{});
-    }
-    const { error } = await db.from('teachers').delete().eq('id', teacher.id);
-    if (error) throw error;
-    showToast('✓ 삭제되었습니다');
-    await loadData();
-  } catch (err) {
-    console.error(err);
-    showToast('삭제 실패: ' + (err.message || err));
-  }
-}
-
-// ============ 작품 폼 (갤러리에서 호출) ============
-function showArtworkForm(artwork = null, presetStudentId = null) {
-  const isEdit = !!artwork;
-  const content = document.getElementById('content');
-
-  if (students.length === 0) {
-    content.innerHTML = '<div class="page-title-row"><div class="page-title">작품 업로드</div></div><div class="empty-state">먼저 학생을 등록해주세요.</div>';
-    return;
-  }
-  if (teachers.length === 0) {
-    content.innerHTML = `
-      <div class="page-title-row"><div class="page-title">작품 업로드</div></div>
-      <div class="empty-state">
-        <div class="big-icon">👨‍🏫</div>
-        먼저 강사를 등록해주세요.<br>
-        <button class="page-action-btn" style="margin-top:16px;" id="goTeacherTab">강사 등록하러 가기</button>
-      </div>`;
-    document.getElementById('goTeacherTab').onclick = () => {
-      currentPage = 'teachers';
-      document.querySelectorAll('.tabbar-btn').forEach(b => b.classList.toggle('active', b.dataset.page === 'teachers'));
-      renderPage();
-    };
-    return;
-  }
-
-  // 학생 자동 선택: 수정 > preset > 첫 번째
-  const formStudentId = isEdit ? artwork.student_id : (presetStudentId || students[0].id);
-  const formTeacherId = isEdit && artwork.teacher_id ? artwork.teacher_id : (selectedTeacherId || (getDefaultTeacher() && getDefaultTeacher().id));
-
-  content.innerHTML = `
-    <div class="page-title-row">
-      <div class="page-title">${isEdit ? '작품 수정' : '작품 추가'}</div>
-    </div>
-    <div style="padding:24px;">
-      <div class="form-group">
-        <label class="form-label">이미지 ${isEdit ? '' : '*'}</label>
-        <div class="upload-area ${isEdit ? 'has-image' : ''}" id="uploadArea">
-          ${isEdit ? `<img class="upload-preview" src="${escapeHtml(artwork.image_url)}" />` : `
-            <div class="upload-icon">🖼️</div>
-            <div class="upload-text">이미지를 선택하거나<br><strong>여기를 탭</strong>해서 업로드</div>
-          `}
-        </div>
-        <input type="file" id="fImage" accept="image/*" style="display:none;" />
-        ${isEdit ? '<div style="font-size:11px;color:#888;margin-top:6px;">※ 이미지를 변경하려면 위 이미지를 탭하세요</div>' : ''}
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">분석할 강사 *</label>
-        <select class="form-select" id="fArtworkTeacher">
-          ${teachers.map(t => `<option value="${t.id}" ${t.id === formTeacherId ? 'selected' : ''}>${escapeHtml(t.name)}쌤${t.is_default ? ' (기본)' : ''}</option>`).join('')}
-        </select>
-        <div style="font-size:11px;color:#888;margin-top:4px;">이 선생님의 톤으로 AI가 분석합니다</div>
-      </div>
-
-      <button class="ai-analyze-btn" id="aiAnalyzeBtn" type="button" disabled>
-        <span class="ai-icon">🤖</span>
-        <span id="aiAnalyzeBtnText">AI로 분석하기</span>
-      </button>
-      <div class="ai-hint">이미지 선택 후 클릭하면 <strong>선택한 강사 톤으로</strong> AI가 자동 작성합니다</div>
-
-      <div class="form-group">
-        <label class="form-label">학생 *</label>
-        <select class="form-select" id="fStudent">
-          ${students.map(s => `<option value="${s.id}" ${s.id === formStudentId ? 'selected':''}>${escapeHtml(s.name)} (${escapeHtml(s.class_name)})</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">제목</label>
-        <input type="text" class="form-input" id="fTitle" value="${artwork ? escapeHtml(artwork.title || '') : ''}" placeholder="예: 정물 연구 - 사과와 항아리" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">수업 주제</label>
-        <input type="text" class="form-input" id="fSubject" value="${artwork ? escapeHtml(artwork.subject || '') : ''}" placeholder="예: 기초 디자인, 발상과 표현" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">설명 / 코멘트</label>
-        <textarea class="form-textarea" id="fDescription" placeholder="작품에 대한 설명이나 강사 코멘트를 입력하세요">${artwork ? escapeHtml(artwork.description || '') : ''}</textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">태그 (쉼표로 구분)</label>
-        <input type="text" class="form-input" id="fTags" value="${artwork && artwork.tags ? escapeHtml(artwork.tags.join(', ')) : ''}" placeholder="예: 우수작, 입시포트폴리오, 정물화" />
-      </div>
-      <div class="form-buttons">
-        <button class="form-btn" id="fCancel">취소</button>
-        <button class="form-btn primary" id="fSave">${isEdit ? '수정' : '업로드'}</button>
-      </div>
-    </div>`;
-
-  const uploadArea = document.getElementById('uploadArea');
-  const fImage = document.getElementById('fImage');
-  const aiBtn = document.getElementById('aiAnalyzeBtn');
-  let selectedFile = null;
-  let imageBase64 = null;
-  let imageMimeType = null;
-
-  if (isEdit && artwork.image_url) {
-    aiBtn.disabled = false;
-    fetch(artwork.image_url).then(r => r.blob()).then(blob => {
-      imageMimeType = blob.type;
-      const reader = new FileReader();
-      reader.onload = e => { imageBase64 = e.target.result.split(',')[1]; };
-      reader.readAsDataURL(blob);
-    }).catch(() => {});
-  }
-
-  uploadArea.onclick = () => fImage.click();
-  fImage.onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast('이미지 파일만 업로드 가능합니다'); return; }
-    if (file.size > 10 * 1024 * 1024) { showToast('파일 크기는 10MB 이하여야 합니다'); return; }
-    selectedFile = file;
-    imageMimeType = file.type;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      imageBase64 = ev.target.result.split(',')[1];
-      uploadArea.classList.add('has-image');
-      uploadArea.innerHTML = `<img class="upload-preview" src="${ev.target.result}" />`;
-      aiBtn.disabled = false;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  document.getElementById('fArtworkTeacher').onchange = (e) => {
-    selectedTeacherId = parseInt(e.target.value);
-  };
-
-  aiBtn.onclick = async () => {
-    if (!imageBase64) { showToast('이미지를 먼저 선택해주세요'); return; }
-    aiBtn.disabled = true;
-    aiBtn.innerHTML = `<span class="ai-spinner"></span><span>AI 분석 중... (5~10초)</span>`;
-    try {
-      const studentId = parseInt(document.getElementById('fStudent').value);
-      const teacherId = parseInt(document.getElementById('fArtworkTeacher').value);
-      const student = students.find(s => s.id === studentId);
-      const teacher = teachers.find(t => t.id === teacherId);
-
-      const response = await fetch(AI_FUNCTION_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`
-        },
-        body: JSON.stringify({
-          imageBase64,
-          mimeType: imageMimeType,
-          studentInfo: student ? { name: student.name, grade: student.grade, school: student.school, class_name: student.class_name } : null,
-          teacherInfo: teacher ? {
-            name: teacher.name,
-            ai_tone_style: teacher.ai_tone_style,
-            writing_style: teacher.writing_style,
-            sample_comment: teacher.sample_comment
-          } : null
-        })
-      });
-      const data = await response.json();
-      if (!response.ok || data.error) throw new Error(data.error || `HTTP ${response.status}`);
-
-      if (data.title) document.getElementById('fTitle').value = data.title;
-      if (data.subject) document.getElementById('fSubject').value = data.subject;
-      if (data.description) document.getElementById('fDescription').value = data.description;
-      if (data.tags && data.tags.length > 0) document.getElementById('fTags').value = data.tags.join(', ');
-
-      const teacherName = teacher ? `${teacher.name}쌤` : 'AI';
-      showToast(`✨ ${teacherName} 톤으로 분석 완료!`);
-    } catch (err) {
-      console.error('AI analyze error:', err);
-      showToast('AI 분석 실패: ' + (err.message || err));
-    } finally {
-      aiBtn.disabled = false;
-      aiBtn.innerHTML = `<span class="ai-icon">🤖</span><span>AI로 분석하기</span>`;
-    }
-  };
-
-  document.getElementById('fCancel').onclick = () => {
-    if (selectedStudent) renderStudentGallery(selectedStudent);
-    else renderGalleryPage();
-  };
-
-  document.getElementById('fSave').onclick = async () => {
-    const studentId = parseInt(document.getElementById('fStudent').value);
-    const teacherId = parseInt(document.getElementById('fArtworkTeacher').value);
-    const title = document.getElementById('fTitle').value.trim();
-    const subject = document.getElementById('fSubject').value.trim();
-    const description = document.getElementById('fDescription').value.trim();
-    const tagsRaw = document.getElementById('fTags').value.trim();
-    const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(t => t) : [];
-
-    if (!isEdit && !selectedFile) { showToast('이미지를 선택해주세요'); return; }
-    if (!studentId) { showToast('학생을 선택해주세요'); return; }
-
-    const saveBtn = document.getElementById('fSave');
-    saveBtn.disabled = true;
-    saveBtn.textContent = '업로드 중...';
-
-    try {
-      let imageUrl = artwork ? artwork.image_url : null;
-      if (selectedFile) {
-        const ext = selectedFile.name.split('.').pop();
-        const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
-        const { error: uploadError } = await db.storage.from('artworks').upload(fileName, selectedFile, { cacheControl: '3600', upsert: false });
-        if (uploadError) throw uploadError;
-        const { data: urlData } = db.storage.from('artworks').getPublicUrl(fileName);
-        imageUrl = urlData.publicUrl;
-        if (isEdit && artwork.image_url) {
-          const oldPath = artwork.image_url.split('/artworks/').pop();
-          if (oldPath) await db.storage.from('artworks').remove([oldPath]).catch(()=>{});
-        }
-      }
-      const payload = {
-        student_id: studentId,
-        teacher_id: teacherId || null,
-        image_url: imageUrl,
-        title: title || null,
-        subject: subject || null,
-        description: description || null,
-        tags: tags.length > 0 ? tags : null
-      };
-      if (isEdit) {
-        const { error } = await db.from('artworks').update(payload).eq('id', artwork.id);
-        if (error) throw error;
-        showToast('✓ 작품이 수정되었습니다');
-      } else {
-        const { error } = await db.from('artworks').insert(payload);
-        if (error) throw error;
-        showToast('✓ 작품이 업로드되었습니다');
-      }
-      // 업로드한 학생의 갤러리로 이동
-      const uploadedStudent = students.find(s => s.id === studentId);
-      await loadData();
-      if (uploadedStudent) {
-        selectedStudent = uploadedStudent;
-        currentPage = 'gallery';
-        document.querySelectorAll('.tabbar-btn').forEach(b => b.classList.toggle('active', b.dataset.page === 'gallery'));
-      }
-      renderPage();
-    } catch (err) {
-      console.error(err);
-      showToast('실패: ' + (err.message || err));
-      saveBtn.disabled = false;
-      saveBtn.textContent = isEdit ? '수정' : '업로드';
-    }
-  };
-}
-
-async function deleteArtwork(artwork) {
-  try {
-    if (artwork.image_url) {
-      const path = artwork.image_url.split('/artworks/').pop();
-      if (path) await db.storage.from('artworks').remove([path]).catch(()=>{});
-    }
-    const { error } = await db.from('artworks').delete().eq('id', artwork.id);
-    if (error) throw error;
-    showToast('✓ 삭제되었습니다');
-    await loadData();
-    renderPage();
-  } catch (err) {
-    console.error(err);
-    showToast('삭제 실패: ' + (err.message || err));
-  }
-}
-
-// ============ [출결기록 페이지] ============
-let recordsMode = 'daily';      // 'daily' | 'monthly'
-let monthlyPreset = 'current';  // 'current' | 'last' | 'custom'
-let monthlyClassFilter = 'all'; // 'all' | 클래스명
-let monthlyStartDate = '';
-let monthlyEndDate = '';
-
-function renderRecordsPage() {
-  const content = document.getElementById('content');
-  content.innerHTML = `
-    <div class="page-title-row"><div class="page-title">📊 출결 기록</div></div>
-    <div class="records-mode-toggle">
-      <button class="records-mode-btn ${recordsMode === 'daily' ? 'active' : ''}" data-mode="daily">📅 일별</button>
-      <button class="records-mode-btn ${recordsMode === 'monthly' ? 'active' : ''}" data-mode="monthly">📈 월별</button>
-    </div>
-    <div id="recordsBody"></div>`;
   
-  document.querySelectorAll('.records-mode-btn').forEach(btn => {
-    btn.onclick = () => {
-      recordsMode = btn.dataset.mode;
-      renderRecordsPage();
-    };
-  });
-
-  if (recordsMode === 'daily') renderDailyRecords();
-  else renderMonthlyRecords();
-}
-
-// ============ 일별 보기 ============
-function renderDailyRecords() {
-  const today = getTodayKey();
-  document.getElementById('recordsBody').innerHTML = `
-    <div class="record-controls">
-      <label class="form-label">날짜 선택</label>
-      <input type="date" class="date-input" id="recordDate" value="${today}" />
-      <div class="record-summary" id="recordSummary"></div>
-    </div>
-    <div id="recordList"><div class="loading"><div class="spinner"></div>불러오는 중...</div></div>`;
-  const dateInput = document.getElementById('recordDate');
-  dateInput.onchange = () => loadDailyRecords(dateInput.value);
-  loadDailyRecords(today);
-}
-
-async function loadDailyRecords(date) {
-  const summary = document.getElementById('recordSummary');
-  const list = document.getElementById('recordList');
-  list.innerHTML = '<div class="loading"><div class="spinner"></div>불러오는 중...</div>';
-  try {
-    const { data: records, error } = await db.from('attendance').select('*').eq('date', date);
-    if (error) throw error;
-    const recordMap = {};
-    (records || []).forEach(r => { recordMap[r.student_id] = r.status; });
-    let present = 0, absent = 0, none = 0;
-    students.forEach(s => {
-      const status = recordMap[s.id];
-      if (status === 'present') present++;
-      else if (status === 'absent') absent++;
-      else none++;
-    });
-    summary.innerHTML = `
-      <div class="summary-card"><div class="summary-num green">${present}</div><div class="summary-label">출석</div></div>
-      <div class="summary-card"><div class="summary-num red">${absent}</div><div class="summary-label">결석</div></div>
-      <div class="summary-card"><div class="summary-num gray">${none}</div><div class="summary-label">미체크</div></div>`;
-    if (students.length === 0) { list.innerHTML = '<div class="empty-state">학생이 없습니다.</div>'; return; }
-    const classes = [...new Set(students.map(s => s.class_name))];
-    let html = '';
-    classes.forEach(cls => {
-      const clsStudents = students.filter(s => s.class_name === cls);
-      html += `<div class="class-header">${escapeHtml(cls)}</div>`;
-      clsStudents.forEach(s => {
-        const status = recordMap[s.id];
-        const statusHtml = status === 'present' ? '<span class="record-status present">출석</span>' : status === 'absent' ? '<span class="record-status absent">결석</span>' : '<span class="record-status none">미체크</span>';
-        html += `
-          <div class="list-item">
-            <div class="avatar" style="width:36px;height:36px;font-size:13px;">${escapeHtml(s.name.charAt(0))}</div>
-            <div class="list-item-info">
-              <div class="list-item-name">${escapeHtml(s.name)}</div>
-              <div class="list-item-meta">${escapeHtml(s.grade || '')} ${s.school ? '· '+escapeHtml(s.school) : ''}</div>
-            </div>
-            <div>${statusHtml}</div>
-          </div>`;
-      });
-    });
-    list.innerHTML = html;
-  } catch (err) {
-    console.error(err);
-    list.innerHTML = `<div class="error-screen"><strong>⚠️ 불러오기 실패</strong>${escapeHtml(err.message || err)}</div>`;
-  }
-}
-
-// ============ 월별 보기 ============
-function getMonthRange(preset) {
-  const now = new Date();
-  let start, end;
-  if (preset === 'current') {
-    start = new Date(now.getFullYear(), now.getMonth(), 1);
-    end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  } else if (preset === 'last') {
-    start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    end = new Date(now.getFullYear(), now.getMonth(), 0);
-  }
-  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  return { start: fmt(start), end: fmt(end) };
-}
-
-function renderMonthlyRecords() {
-  // 초기값 설정
-  if (!monthlyStartDate || !monthlyEndDate) {
-    const range = getMonthRange('current');
-    monthlyStartDate = range.start;
-    monthlyEndDate = range.end;
-  }
-
-  const classes = [...new Set(students.map(s => s.class_name))];
-
-  document.getElementById('recordsBody').innerHTML = `
-    <div class="filter-bar">
-      <div class="preset-buttons">
-        <button class="preset-btn ${monthlyPreset === 'current' ? 'active' : ''}" data-preset="current">이번 달</button>
-        <button class="preset-btn ${monthlyPreset === 'last' ? 'active' : ''}" data-preset="last">지난 달</button>
-        <button class="preset-btn ${monthlyPreset === 'custom' ? 'active' : ''}" data-preset="custom">커스텀</button>
-      </div>
-      <div class="custom-range ${monthlyPreset === 'custom' ? 'show' : ''}" id="customRange">
-        <input type="date" class="filter-input" id="customStart" value="${monthlyStartDate}" />
-        <span>~</span>
-        <input type="date" class="filter-input" id="customEnd" value="${monthlyEndDate}" />
-      </div>
-      <div class="filter-row" style="margin-top:10px;">
-        <span class="filter-label">반</span>
-        <select class="filter-select" id="classFilter">
-          <option value="all" ${monthlyClassFilter === 'all' ? 'selected' : ''}>전체 반</option>
-          ${classes.map(c => `<option value="${escapeHtml(c)}" ${monthlyClassFilter === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
-        </select>
-      </div>
-      <button class="download-btn" id="downloadBtn">
-        <span class="download-icon">📥</span>
-        <span>엑셀로 다운로드</span>
-      </button>
-    </div>
-    <div id="monthlyContent"><div class="loading"><div class="spinner"></div>통계 계산 중...</div></div>`;
-
-  // 프리셋 버튼
-  document.querySelectorAll('.preset-btn').forEach(btn => {
-    btn.onclick = () => {
-      monthlyPreset = btn.dataset.preset;
-      if (monthlyPreset !== 'custom') {
-        const range = getMonthRange(monthlyPreset);
-        monthlyStartDate = range.start;
-        monthlyEndDate = range.end;
-      }
-      renderMonthlyRecords();
-    };
-  });
-
-  // 커스텀 날짜
-  if (monthlyPreset === 'custom') {
-    const startInput = document.getElementById('customStart');
-    const endInput = document.getElementById('customEnd');
-    const handleChange = () => {
-      monthlyStartDate = startInput.value;
-      monthlyEndDate = endInput.value;
-      if (monthlyStartDate && monthlyEndDate && monthlyStartDate <= monthlyEndDate) {
-        loadMonthlyRecords();
-      }
-    };
-    startInput.onchange = handleChange;
-    endInput.onchange = handleChange;
-  }
-
-  // 반 필터
-  document.getElementById('classFilter').onchange = (e) => {
-    monthlyClassFilter = e.target.value;
-    loadMonthlyRecords();
-  };
-
-  // 다운로드 버튼
-  document.getElementById('downloadBtn').onclick = downloadExcel;
-
-  loadMonthlyRecords();
-}
-
-let cachedMonthlyData = null; // 다운로드용 캐시
-
-async function loadMonthlyRecords() {
-  const monthlyContent = document.getElementById('monthlyContent');
-  monthlyContent.innerHTML = '<div class="loading"><div class="spinner"></div>통계 계산 중...</div>';
-
-  try {
-    // 기간 내 출결 데이터 가져오기
-    const { data: records, error } = await db.from('attendance')
-      .select('*')
-      .gte('date', monthlyStartDate)
-      .lte('date', monthlyEndDate)
-      .order('date');
-    if (error) throw error;
-
-    // 반 필터 적용된 학생 목록
-    const filteredStudents = monthlyClassFilter === 'all' 
-      ? students 
-      : students.filter(s => s.class_name === monthlyClassFilter);
-
-    if (filteredStudents.length === 0) {
-      monthlyContent.innerHTML = '<div class="empty-state">학생이 없습니다.</div>';
-      return;
-    }
-
-    // 날짜 목록 생성 (시작 ~ 끝)
-    const allDates = [];
-    const cur = new Date(monthlyStartDate);
-    const endDate = new Date(monthlyEndDate);
-    while (cur <= endDate) {
-      const y = cur.getFullYear();
-      const m = String(cur.getMonth() + 1).padStart(2, '0');
-      const d = String(cur.getDate()).padStart(2, '0');
-      allDates.push(`${y}-${m}-${d}`);
-      cur.setDate(cur.getDate() + 1);
-    }
-
-    // 학생별 통계 계산
-    const studentStats = filteredStudents.map(s => {
-      const studentRecords = (records || []).filter(r => r.student_id === s.id);
-      const present = studentRecords.filter(r => r.status === 'present').length;
-      const absent = studentRecords.filter(r => r.status === 'absent').length;
-      const checked = present + absent;
-      const rate = checked > 0 ? Math.round((present / checked) * 100) : 0;
-      return { student: s, present, absent, checked, rate };
-    });
-
-    // 일별 매트릭스용 데이터 (엑셀 다운로드용)
-    const matrixData = filteredStudents.map(s => {
-      const row = { student: s, byDate: {} };
-      allDates.forEach(date => {
-        const rec = (records || []).find(r => r.student_id === s.id && r.date === date);
-        row.byDate[date] = rec ? rec.status : null;
-      });
-      return row;
-    });
-
-    // 캐시 (다운로드용)
-    cachedMonthlyData = {
-      startDate: monthlyStartDate,
-      endDate: monthlyEndDate,
-      classFilter: monthlyClassFilter,
-      allDates,
-      studentStats,
-      matrixData,
-    };
-
-    // 전체 통계
-    const totalPresent = studentStats.reduce((sum, s) => sum + s.present, 0);
-    const totalAbsent = studentStats.reduce((sum, s) => sum + s.absent, 0);
-    const totalChecked = totalPresent + totalAbsent;
-    const overallRate = totalChecked > 0 ? Math.round((totalPresent / totalChecked) * 100) : 0;
-
-    // 기간 표시
-    const startStr = formatDate(monthlyStartDate);
-    const endStr = formatDate(monthlyEndDate);
-    const periodLabel = (startStr === endStr) ? startStr : `${startStr} ~ ${endStr}`;
-
-    // 학생별 통계 표 (반별로 그룹)
-    const studentsByClass = {};
-    studentStats.forEach(stat => {
-      const cls = stat.student.class_name;
-      if (!studentsByClass[cls]) studentsByClass[cls] = [];
-      studentsByClass[cls].push(stat);
-    });
-
-    let tableHtml = `
-      <div class="stats-table">
-        <div class="stats-table-row header">
-          <div>이름</div>
-          <div style="text-align:center;">출석</div>
-          <div style="text-align:center;">결석</div>
-          <div style="text-align:center;">체크</div>
-          <div style="text-align:center;">출석률</div>
-        </div>`;
-
-    Object.keys(studentsByClass).forEach(cls => {
-      tableHtml += `<div class="class-header">${escapeHtml(cls)}</div>`;
-      studentsByClass[cls].forEach(stat => {
-        const rateClass = stat.rate >= 90 ? 'high' : (stat.rate >= 70 ? 'mid' : 'low');
-        const rateDisplay = stat.checked > 0 ? `${stat.rate}%` : '-';
-        tableHtml += `
-          <div class="stats-table-row">
-            <div class="name-cell">
-              ${escapeHtml(stat.student.name)}
-              <div class="meta">${escapeHtml(stat.student.grade || '')}</div>
-            </div>
-            <div class="num-cell green">${stat.present}</div>
-            <div class="num-cell red">${stat.absent}</div>
-            <div class="num-cell gray">${stat.checked}</div>
-            <div class="rate-cell ${rateClass}">${rateDisplay}</div>
-          </div>`;
-      });
-    });
-    tableHtml += '</div>';
-
-    monthlyContent.innerHTML = `
-      <div class="monthly-summary">
-        <div class="monthly-summary-title">📊 기간 통계</div>
-        <div class="monthly-summary-period">${periodLabel}</div>
-        <div class="monthly-stats-grid">
-          <div class="monthly-stat-card">
-            <div class="monthly-stat-num">${filteredStudents.length}</div>
-            <div class="monthly-stat-label">학생</div>
-          </div>
-          <div class="monthly-stat-card">
-            <div class="monthly-stat-num green">${totalPresent}</div>
-            <div class="monthly-stat-label">출석</div>
-          </div>
-          <div class="monthly-stat-card">
-            <div class="monthly-stat-num red">${totalAbsent}</div>
-            <div class="monthly-stat-label">결석</div>
-          </div>
-          <div class="monthly-stat-card">
-            <div class="monthly-stat-num blue">${overallRate}%</div>
-            <div class="monthly-stat-label">출석률</div>
-          </div>
-        </div>
-      </div>
-      ${tableHtml}`;
-  } catch (err) {
-    console.error(err);
-    monthlyContent.innerHTML = `<div class="error-screen"><strong>⚠️ 불러오기 실패</strong>${escapeHtml(err.message || err)}</div>`;
-  }
-}
-
-// ============ 엑셀 다운로드 ============
-function downloadExcel() {
-  if (!cachedMonthlyData) {
-    showToast('먼저 데이터를 불러와주세요');
-    return;
-  }
-  if (typeof XLSX === 'undefined') {
-    showToast('엑셀 라이브러리 로딩 중... 잠시 후 다시 시도해주세요');
-    return;
-  }
-
-  try {
-    const { startDate, endDate, classFilter, allDates, studentStats, matrixData } = cachedMonthlyData;
-    const wb = XLSX.utils.book_new();
-
-    // ===== 시트 1: 학생별 통계 요약 =====
-    const summaryData = [];
-    summaryData.push(['HI5 부산 센텀점 출결 통계']);
-    summaryData.push([`기간: ${startDate} ~ ${endDate}`]);
-    summaryData.push([`반: ${classFilter === 'all' ? '전체' : classFilter}`]);
-    summaryData.push([`다운로드: ${new Date().toLocaleString('ko-KR')}`]);
-    summaryData.push([]);
-    summaryData.push(['이름', '반', '학년', '학교', '출석', '결석', '체크합계', '출석률(%)']);
-
-    studentStats.forEach(stat => {
-      summaryData.push([
-        stat.student.name,
-        stat.student.class_name,
-        stat.student.grade || '',
-        stat.student.school || '',
-        stat.present,
-        stat.absent,
-        stat.checked,
-        stat.checked > 0 ? stat.rate : '-',
-      ]);
-    });
-
-    // 합계 행
-    const totalP = studentStats.reduce((s, r) => s + r.present, 0);
-    const totalA = studentStats.reduce((s, r) => s + r.absent, 0);
-    const totalC = totalP + totalA;
-    const totalRate = totalC > 0 ? Math.round((totalP / totalC) * 100) : 0;
-    summaryData.push([]);
-    summaryData.push(['합계', '', '', '', totalP, totalA, totalC, totalRate]);
-
-    const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
-
-    // 컬럼 너비 조정
-    ws1['!cols'] = [
-      { wch: 12 }, { wch: 14 }, { wch: 8 }, { wch: 14 },
-      { wch: 8 }, { wch: 8 }, { wch: 10 }, { wch: 10 }
-    ];
-
-    XLSX.utils.book_append_sheet(wb, ws1, '학생별 통계');
-
-    // ===== 시트 2: 일별 매트릭스 =====
-    const matrixHeader = ['이름', '반', '학년'];
-    allDates.forEach(date => {
-      const d = new Date(date);
-      matrixHeader.push(`${d.getMonth()+1}/${d.getDate()}`);
-    });
-    matrixHeader.push('출석', '결석', '출석률(%)');
-
-    const matrixSheet = [
-      ['HI5 부산 센텀점 일별 출결 매트릭스'],
-      [`기간: ${startDate} ~ ${endDate}`],
-      [`반: ${classFilter === 'all' ? '전체' : classFilter}`],
-      [],
-      matrixHeader,
-    ];
-
-    matrixData.forEach(row => {
-      const r = [row.student.name, row.student.class_name, row.student.grade || ''];
-      let rowPresent = 0, rowAbsent = 0;
-      allDates.forEach(date => {
-        const status = row.byDate[date];
-        if (status === 'present') { r.push('출석'); rowPresent++; }
-        else if (status === 'absent') { r.push('결석'); rowAbsent++; }
-        else { r.push(''); }
-      });
-      const rowChecked = rowPresent + rowAbsent;
-      const rowRate = rowChecked > 0 ? Math.round((rowPresent / rowChecked) * 100) : '-';
-      r.push(rowPresent, rowAbsent, rowRate);
-      matrixSheet.push(r);
-    });
-
-    const ws2 = XLSX.utils.aoa_to_sheet(matrixSheet);
-
-    // 매트릭스 시트 컬럼 너비
-    const matrixCols = [{ wch: 10 }, { wch: 12 }, { wch: 6 }];
-    allDates.forEach(() => matrixCols.push({ wch: 6 }));
-    matrixCols.push({ wch: 6 }, { wch: 6 }, { wch: 8 });
-    ws2['!cols'] = matrixCols;
-
-    XLSX.utils.book_append_sheet(wb, ws2, '일별 매트릭스');
-
-    // 파일명 생성
-    const filterLabel = classFilter === 'all' ? '전체' : classFilter;
-    const fileName = `HI5_출결통계_${filterLabel}_${startDate}_${endDate}.xlsx`;
-
-    XLSX.writeFile(wb, fileName);
-    showToast('✓ 엑셀 파일이 다운로드되었습니다');
-  } catch (err) {
-    console.error('엑셀 다운로드 에러:', err);
-    showToast('다운로드 실패: ' + (err.message || err));
-  }
-}
-
-// 초기화
-setDate();
-showRoleScreen();
-</script>
-</body>
-</html>
