@@ -336,6 +336,60 @@
 
   /* 헤더 통합 (반 탭이 헤더 아래로 올 때) */
   .stats-and-tabs-wrap { background: #ffffff; }
+
+  /* ============ 알림장 ============ */
+  .notes-toolbar { padding: 12px 16px; background: #fff; border-bottom: 1px solid #e8e8e8; }
+  .notes-search { width: 100%; padding: 10px 12px; font-size: 13px; border: 1px solid #e8e8e8; border-radius: 8px; background: #fafafa; outline: none; transition: all 0.15s; }
+  .notes-search:focus { border-color: #c0392b; background: #fff; }
+  .notes-filter-row { display: flex; gap: 6px; margin-top: 10px; }
+  .notes-filter-btn { flex: 1; padding: 8px 4px; font-size: 12px; font-weight: 700; background: #fafafa; border: 1px solid #eaeaea; border-radius: 6px; color: #666; cursor: pointer; transition: all 0.15s; }
+  .notes-filter-btn.active { background: #c0392b; border-color: #c0392b; color: #fff; }
+  .notes-list { padding: 12px 16px; }
+  .note-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; position: relative; }
+  .note-card:active { background: #fafafa; }
+  .note-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+  .note-card-recipient { font-size: 11px; font-weight: 800; color: #c0392b; letter-spacing: 0.3px; }
+  .note-card-recipient.is-class { color: #2980b9; }
+  .note-card-date { font-size: 10px; color: #aaa; white-space: nowrap; }
+  .note-card-title { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; line-height: 1.4; }
+  .note-card-body { font-size: 12px; color: #666; line-height: 1.5; max-height: 36px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .note-card-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; font-size: 11px; color: #888; }
+  .note-card-meta .blocks-summary { display: flex; gap: 6px; }
+  .note-card-meta .block-chip { background: #fafafa; padding: 2px 7px; border-radius: 4px; font-size: 10px; color: #666; font-weight: 600; }
+  .note-card-edited { font-size: 10px; color: #aaa; }
+  .note-card-draft-badge { position: absolute; top: 10px; right: 12px; background: #f39c12; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.3px; }
+
+  /* 알림장 작성 폼 */
+  .note-form-section { padding: 16px; background: #fff; border-bottom: 1px solid #f0f0f0; }
+  .note-form-section .form-label { display: block; font-size: 11px; font-weight: 700; color: #888; letter-spacing: 0.3px; margin-bottom: 6px; }
+  .recipient-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+  .recipient-toggle-btn { flex: 1; padding: 10px 4px; font-size: 12px; font-weight: 700; background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px; color: #666; cursor: pointer; transition: all 0.15s; }
+  .recipient-toggle-btn.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+  .note-form-blocks { padding: 16px; }
+  .note-block-add-row { display: flex; gap: 6px; margin-bottom: 14px; }
+  .note-block-add-btn { flex: 1; padding: 10px 6px; font-size: 11px; font-weight: 700; background: #fff; border: 1px dashed #c0392b; border-radius: 8px; color: #c0392b; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .note-block-add-btn:active { background: #fff5f3; }
+  .note-block-add-btn .ic { font-size: 16px; }
+  .note-block-card { background: #fafafa; border: 1px solid #e8e8e8; border-radius: 10px; padding: 12px; margin-bottom: 8px; position: relative; }
+  .note-block-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .note-block-card-type { font-size: 11px; font-weight: 700; color: #c0392b; letter-spacing: 0.3px; }
+  .note-block-card-remove { background: #fff; border: 1px solid #eaeaea; color: #888; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; line-height: 1; cursor: pointer; }
+  .note-block-card-remove:active { color: #c0392b; border-color: #c0392b; }
+  .note-block-card-image { width: 100%; max-height: 200px; object-fit: cover; border-radius: 6px; }
+  .note-block-card-text { font-size: 12px; color: #666; margin-top: 6px; line-height: 1.5; }
+  .note-block-card-attendance { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; color: #1a1a1a; }
+  .note-block-card-attendance .att-status { font-weight: 700; }
+  .note-block-card-attendance .att-status.present { color: #27ae60; }
+  .note-block-card-attendance .att-status.absent { color: #c0392b; }
+
+  .note-form-bottom { padding: 16px; background: #fff; border-top: 1px solid #e8e8e8; display: flex; gap: 8px; position: sticky; bottom: 60px; z-index: 5; }
+  .note-form-bottom .form-btn { flex: 1; }
+
+  /* 알림장 빈 상태 */
+  .notes-empty { padding: 60px 24px; text-align: center; color: #888; }
+  .notes-empty .ic { font-size: 48px; margin-bottom: 16px; }
+  .notes-empty .ttl { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .notes-empty .desc { font-size: 12px; line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -525,11 +579,17 @@ let students = [];
 let attendanceMap = {};
 let pendingChanges = {};
 let currentTab = '';
-let currentPage = 'attendance';     // attendance / gallery / students / teachers / records
+let currentPage = 'attendance';     // attendance / gallery / notes / students / teachers / records
 let artworks = [];
 let teachers = [];
 let selectedTeacherId = null;
 let selectedStudent = null;          // 갤러리에서 선택한 학생
+
+// 알림장 관련
+let notes = [];                      // 알림장 목록
+let notesFilter = 'all';             // 'all' | 'student' | 'class'
+let notesSearch = '';                // 검색어
+let noteFormBlocks = [];             // 작성 중인 블록들 (메모리)
 
 // 유틸
 function getTodayKey() {
@@ -675,6 +735,13 @@ async function loadData() {
       selectedTeacherId = def ? def.id : null;
     }
 
+    // 알림장 목록 로드 (블록들도 함께)
+    const { data: noteData, error: e5 } = await db.from('notes')
+      .select('*, note_blocks(*)')
+      .order('created_at', { ascending: false });
+    if (e5) throw e5;
+    notes = noteData || [];
+
     setConnStatus('');
     renderPage();
   } catch (err) {
@@ -752,19 +819,568 @@ function renderPage() {
   else if (currentPage === 'records') renderRecordsPage();
 }
 
-// ============ [알림장 페이지] (준비 중) ============
+// ============ [알림장 페이지] ============
 function renderNotesPage() {
   const content = document.getElementById('content');
-  content.innerHTML = `
-    <div style="padding: 80px 24px; text-align: center; color: #888;">
-      <div style="font-size: 56px; margin-bottom: 20px;">📬</div>
-      <div style="font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px;">알림장 기능 준비 중</div>
-      <div style="font-size: 13px; line-height: 1.7;">
-        다음 단계에서 알림장 작성·발송 기능이<br>
-        활성화됩니다.
+
+  // 필터링
+  let filtered = notes.slice();
+  if (notesFilter === 'student') filtered = filtered.filter(n => n.recipient_type === 'student');
+  if (notesFilter === 'class') filtered = filtered.filter(n => n.recipient_type === 'class');
+  if (notesSearch) {
+    const q = notesSearch.toLowerCase();
+    filtered = filtered.filter(n => {
+      const inTitle = (n.title || '').toLowerCase().includes(q);
+      const inBody = (n.body || '').toLowerCase().includes(q);
+      const inClass = (n.class_name || '').toLowerCase().includes(q);
+      const student = n.student_id ? students.find(s => s.id === n.student_id) : null;
+      const inStudent = student ? student.name.toLowerCase().includes(q) : false;
+      return inTitle || inBody || inClass || inStudent;
+    });
+  }
+
+  let html = `
+    <div class="page-title-row">
+      <div class="page-title">알림장</div>
+      <button class="page-action-btn" id="newNoteBtn">+ 새 알림장</button>
+    </div>
+    <div class="notes-toolbar">
+      <input type="text" class="notes-search" id="notesSearchInput" placeholder="🔍 학생명·반·제목으로 검색" value="${escapeHtml(notesSearch)}" />
+      <div class="notes-filter-row">
+        <button class="notes-filter-btn ${notesFilter==='all'?'active':''}" data-filter="all">전체 (${notes.length})</button>
+        <button class="notes-filter-btn ${notesFilter==='student'?'active':''}" data-filter="student">1:1 (${notes.filter(n=>n.recipient_type==='student').length})</button>
+        <button class="notes-filter-btn ${notesFilter==='class'?'active':''}" data-filter="class">반 단위 (${notes.filter(n=>n.recipient_type==='class').length})</button>
       </div>
     </div>
   `;
+
+  if (filtered.length === 0) {
+    if (notes.length === 0) {
+      html += `
+        <div class="notes-empty">
+          <div class="ic">📬</div>
+          <div class="ttl">아직 작성된 알림장이 없습니다</div>
+          <div class="desc">우측 상단 [+ 새 알림장] 버튼으로<br>첫 알림장을 작성해보세요.</div>
+        </div>`;
+    } else {
+      html += `
+        <div class="notes-empty">
+          <div class="ic">🔍</div>
+          <div class="ttl">검색 결과가 없습니다</div>
+          <div class="desc">다른 검색어로 시도해보세요.</div>
+        </div>`;
+    }
+  } else {
+    html += '<div class="notes-list">';
+    filtered.forEach(n => {
+      const recipientLabel = n.recipient_type === 'class'
+        ? `📢 ${escapeHtml(n.class_name || '')} (반 전체)`
+        : `📬 ${(()=>{
+            const s = students.find(s => s.id === n.student_id);
+            return s ? `${escapeHtml(s.name)} (${escapeHtml(s.class_name)})` : '학생 정보 없음';
+          })()}`;
+      const teacher = n.teacher_id ? teachers.find(t => t.id === n.teacher_id) : null;
+      const blocks = n.note_blocks || [];
+      const blockCounts = {
+        artwork: blocks.filter(b => b.block_type === 'artwork').length,
+        attendance: blocks.filter(b => b.block_type === 'attendance').length,
+        image: blocks.filter(b => b.block_type === 'image').length
+      };
+      const blocksSummary = [];
+      if (blockCounts.artwork) blocksSummary.push(`<span class="block-chip">🎨 작품 ${blockCounts.artwork}</span>`);
+      if (blockCounts.attendance) blocksSummary.push(`<span class="block-chip">📋 출결</span>`);
+      if (blockCounts.image) blocksSummary.push(`<span class="block-chip">🖼️ 이미지 ${blockCounts.image}</span>`);
+
+      html += `
+        <div class="note-card" data-note-id="${n.id}">
+          ${n.is_draft ? '<span class="note-card-draft-badge">임시저장</span>' : ''}
+          <div class="note-card-top">
+            <div class="note-card-recipient ${n.recipient_type==='class'?'is-class':''}">${recipientLabel}</div>
+            <div class="note-card-date">${formatRelativeTime(n.created_at)}</div>
+          </div>
+          <div class="note-card-title">${escapeHtml(n.title)}</div>
+          ${n.body ? `<div class="note-card-body">${escapeHtml(n.body)}</div>` : ''}
+          <div class="note-card-meta">
+            <div class="blocks-summary">${blocksSummary.join('') || '<span style="color:#bbb;font-size:10px;">첨부 없음</span>'}</div>
+            ${teacher ? `<span style="margin-left:auto;">${escapeHtml(teacher.name)}쌤</span>` : ''}
+            ${n.is_edited ? '<span class="note-card-edited">(수정됨)</span>' : ''}
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+
+  // 이벤트 바인딩
+  document.getElementById('newNoteBtn').onclick = () => showNoteForm();
+
+  document.getElementById('notesSearchInput').oninput = (e) => {
+    notesSearch = e.target.value;
+    // 검색은 간단히 다시 그리기 (포커스 유지를 위해 약간의 트릭)
+    renderNotesPage();
+    const inp = document.getElementById('notesSearchInput');
+    if (inp) { inp.focus(); inp.setSelectionRange(notesSearch.length, notesSearch.length); }
+  };
+
+  document.querySelectorAll('.notes-filter-btn').forEach(btn => {
+    btn.onclick = () => {
+      notesFilter = btn.dataset.filter;
+      renderNotesPage();
+    };
+  });
+
+  // 카드 클릭은 상세 화면 (5단계에서 채움) - 일단 알림만
+  document.querySelectorAll('.note-card').forEach(card => {
+    card.onclick = () => {
+      showToast('상세 화면은 다음 단계에서 활성화됩니다');
+    };
+  });
+}
+
+// 상대 시간 포맷 ("3분 전", "어제", "5월 8일")
+function formatRelativeTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffMin = Math.floor(diffMs / 60000);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffMin < 1) return '방금';
+  if (diffMin < 60) return `${diffMin}분 전`;
+  if (diffHr < 24) return `${diffHr}시간 전`;
+  if (diffDay === 1) return '어제';
+  if (diffDay < 7) return `${diffDay}일 전`;
+  return `${d.getMonth()+1}월 ${d.getDate()}일`;
+}
+
+// 8자리 토큰 생성 (영문소문자+숫자)
+function generateShareToken() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let token = '';
+  for (let i = 0; i < 8; i++) token += chars[Math.floor(Math.random() * chars.length)];
+  return token;
+}
+
+// ============ [알림장 작성 폼] ============
+function showNoteForm(note = null) {
+  const isEdit = !!note;
+  const content = document.getElementById('content');
+
+  if (students.length === 0) {
+    content.innerHTML = '<div class="page-title-row"><div class="page-title">알림장 작성</div></div><div class="empty-state">먼저 학생을 등록해주세요.</div>';
+    return;
+  }
+
+  // 작성 시작 시 블록 초기화
+  noteFormBlocks = isEdit ? [] : [];  // 수정은 5단계에서
+
+  // 초기값
+  const initRecipientType = isEdit ? note.recipient_type : 'student';
+  const initStudentId = isEdit ? note.student_id : students[0].id;
+  const classes = [...new Set(students.map(s => s.class_name))];
+  const initClassName = isEdit ? note.class_name : (classes[0] || '');
+  const initTeacherId = (isEdit && note.teacher_id) ? note.teacher_id : (selectedTeacherId || (getDefaultTeacher() && getDefaultTeacher().id));
+
+  content.innerHTML = `
+    <div class="page-title-row">
+      <div class="page-title">${isEdit ? '알림장 수정' : '새 알림장'}</div>
+    </div>
+
+    <div class="note-form-section">
+      <label class="form-label">받는 사람</label>
+      <div class="recipient-toggle">
+        <button class="recipient-toggle-btn ${initRecipientType==='student'?'active':''}" data-rcp="student" type="button">📬 학생 1:1</button>
+        <button class="recipient-toggle-btn ${initRecipientType==='class'?'active':''}" data-rcp="class" type="button">📢 반 전체</button>
+      </div>
+
+      <div id="rcpStudentBox" style="${initRecipientType==='student'?'':'display:none;'}">
+        <select class="form-select" id="fNoteStudent">
+          ${students.map(s => `<option value="${s.id}" ${s.id===initStudentId?'selected':''}>${escapeHtml(s.name)} (${escapeHtml(s.class_name)})</option>`).join('')}
+        </select>
+      </div>
+      <div id="rcpClassBox" style="${initRecipientType==='class'?'':'display:none;'}">
+        <select class="form-select" id="fNoteClass">
+          ${classes.map(c => `<option value="${escapeHtml(c)}" ${c===initClassName?'selected':''}>${escapeHtml(c)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="note-form-section">
+      <label class="form-label">작성 강사</label>
+      <select class="form-select" id="fNoteTeacher">
+        ${teachers.map(t => `<option value="${t.id}" ${t.id===initTeacherId?'selected':''}>${escapeHtml(t.name)}쌤${t.is_default?' (기본)':''}</option>`).join('')}
+      </select>
+    </div>
+
+    <div class="note-form-section">
+      <label class="form-label">제목 *</label>
+      <input type="text" class="form-input" id="fNoteTitle" placeholder="예: 오늘의 작품 / 다음 주 재료 안내" />
+
+      <label class="form-label" style="margin-top:14px;">본문</label>
+      <textarea class="form-textarea" id="fNoteBody" placeholder="학부모에게 전달할 내용을 자유롭게 입력하세요"></textarea>
+    </div>
+
+    <div class="note-form-blocks">
+      <label class="form-label" style="font-size:11px;font-weight:700;color:#888;letter-spacing:0.3px;display:block;margin-bottom:8px;">첨부</label>
+      <div class="note-block-add-row">
+        <button class="note-block-add-btn" id="addArtworkBlock" type="button">
+          <span class="ic">🎨</span><span>작품 첨부</span>
+        </button>
+        <button class="note-block-add-btn" id="addAttendanceBlock" type="button">
+          <span class="ic">📋</span><span>출결 첨부</span>
+        </button>
+        <button class="note-block-add-btn" id="addImageBlock" type="button">
+          <span class="ic">🖼️</span><span>이미지 첨부</span>
+        </button>
+      </div>
+      <div id="noteBlocksList"></div>
+    </div>
+
+    <input type="file" id="noteImageFileInput" accept="image/*" style="display:none;" />
+    <input type="file" id="noteArtworkFileInput" accept="image/*" style="display:none;" />
+
+    <div class="note-form-bottom">
+      <button class="form-btn" id="fNoteCancel" type="button">취소</button>
+      <button class="form-btn primary" id="fNoteSave" type="button">저장하고 발송</button>
+    </div>
+  `;
+
+  // 받는 사람 토글
+  document.querySelectorAll('.recipient-toggle-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.recipient-toggle-btn').forEach(b => b.classList.toggle('active', b === btn));
+      const isStudent = btn.dataset.rcp === 'student';
+      document.getElementById('rcpStudentBox').style.display = isStudent ? '' : 'none';
+      document.getElementById('rcpClassBox').style.display = isStudent ? 'none' : '';
+    };
+  });
+
+  // 첨부 버튼들
+  document.getElementById('addArtworkBlock').onclick = () => {
+    document.getElementById('noteArtworkFileInput').click();
+  };
+  document.getElementById('addImageBlock').onclick = () => {
+    document.getElementById('noteImageFileInput').click();
+  };
+  document.getElementById('addAttendanceBlock').onclick = handleAddAttendanceBlock;
+
+  // 이미지 첨부 (일반)
+  document.getElementById('noteImageFileInput').onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('이미지 파일만 가능합니다'); return; }
+    e.target.value = '';
+    showToast('이미지 업로드 중...');
+    try {
+      const url = await uploadImageToStorage(file);
+      noteFormBlocks.push({
+        block_type: 'image',
+        image_url: url,
+        order_index: noteFormBlocks.length
+      });
+      renderNoteFormBlocks();
+      showToast('✓ 이미지가 추가되었습니다');
+    } catch (err) {
+      console.error(err);
+      showToast('업로드 실패: ' + (err.message || err));
+    }
+  };
+
+  // 작품 첨부 (업로드 → AI 분석 → artworks 테이블 저장 → 블록에 artwork_id 등록)
+  document.getElementById('noteArtworkFileInput').onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('이미지 파일만 가능합니다'); return; }
+    e.target.value = '';
+    await handleAddArtworkBlock(file);
+  };
+
+  // 취소 / 저장
+  document.getElementById('fNoteCancel').onclick = () => {
+    noteFormBlocks = [];
+    renderNotesPage();
+  };
+  document.getElementById('fNoteSave').onclick = () => saveNote(false);
+
+  // 첫 렌더
+  renderNoteFormBlocks();
+}
+
+// 첨부 블록 리스트 다시 그리기
+function renderNoteFormBlocks() {
+  const list = document.getElementById('noteBlocksList');
+  if (!list) return;
+  if (noteFormBlocks.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:20px 0;color:#bbb;font-size:12px;">첨부된 항목이 없습니다</div>';
+    return;
+  }
+  let html = '';
+  noteFormBlocks.forEach((b, idx) => {
+    let inner = '';
+    if (b.block_type === 'image') {
+      inner = `<img class="note-block-card-image" src="${escapeHtml(b.image_url)}" />`;
+    } else if (b.block_type === 'artwork') {
+      const artwork = artworks.find(a => a.id === b.artwork_id);
+      const imageUrl = artwork ? artwork.image_url : (b._tempImageUrl || '');
+      const desc = artwork ? (artwork.description || '') : (b._tempDescription || '');
+      const title = artwork ? (artwork.title || '') : (b._tempTitle || '');
+      inner = `
+        ${imageUrl ? `<img class="note-block-card-image" src="${escapeHtml(imageUrl)}" />` : ''}
+        ${title ? `<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-top:8px;">${escapeHtml(title)}</div>` : ''}
+        ${desc ? `<div class="note-block-card-text">${escapeHtml(desc)}</div>` : ''}
+      `;
+    } else if (b.block_type === 'attendance') {
+      const c = b.content || {};
+      inner = `
+        <div class="note-block-card-attendance">
+          <span>📅 ${escapeHtml(c.date || '')}</span>
+          <span class="att-status ${c.status==='present'?'present':'absent'}">${c.status==='present'?'출석':'결석'}</span>
+          ${c.note ? `<span style="color:#888;font-size:12px;">— ${escapeHtml(c.note)}</span>` : ''}
+        </div>
+      `;
+    }
+    html += `
+      <div class="note-block-card">
+        <div class="note-block-card-header">
+          <div class="note-block-card-type">${b.block_type==='artwork'?'🎨 작품':b.block_type==='attendance'?'📋 출결':'🖼️ 이미지'}</div>
+          <button class="note-block-card-remove" data-idx="${idx}" type="button">×</button>
+        </div>
+        ${inner}
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+
+  // 삭제 버튼
+  list.querySelectorAll('.note-block-card-remove').forEach(btn => {
+    btn.onclick = () => {
+      const i = parseInt(btn.dataset.idx);
+      noteFormBlocks.splice(i, 1);
+      renderNoteFormBlocks();
+    };
+  });
+}
+
+// Storage에 이미지 업로드 → public URL 반환
+async function uploadImageToStorage(file) {
+  const ext = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${ext}`;
+  const { error: uploadError } = await db.storage.from('artworks').upload(fileName, file, { cacheControl: '3600', upsert: false });
+  if (uploadError) throw uploadError;
+  const { data: urlData } = db.storage.from('artworks').getPublicUrl(fileName);
+  return urlData.publicUrl;
+}
+
+// 작품 첨부: 업로드 → AI 분석 → artworks 저장 → 블록에 추가 (갤러리 자동 연동)
+async function handleAddArtworkBlock(file) {
+  // 받는 학생/강사 확인
+  const recipientBtn = document.querySelector('.recipient-toggle-btn.active');
+  const recipientType = recipientBtn ? recipientBtn.dataset.rcp : 'student';
+  let studentId = null;
+  if (recipientType === 'student') {
+    studentId = parseInt(document.getElementById('fNoteStudent').value);
+  } else {
+    // 반 단위일 때는 작품을 어떤 학생에 귀속시킬지 모호 → 첫 학생으로 임시 (또는 안내)
+    showToast('작품 첨부는 1:1 알림장에서만 가능합니다');
+    return;
+  }
+  const teacherId = parseInt(document.getElementById('fNoteTeacher').value);
+  const student = students.find(s => s.id === studentId);
+  const teacher = teachers.find(t => t.id === teacherId);
+  if (!student) { showToast('학생을 선택해주세요'); return; }
+
+  showToast('이미지 업로드 중...');
+  let imageUrl;
+  try {
+    imageUrl = await uploadImageToStorage(file);
+  } catch (err) {
+    showToast('업로드 실패: ' + (err.message || err));
+    return;
+  }
+
+  // AI 분석 호출
+  showToast('🤖 AI가 작품 분석 중...');
+  let aiResult = { title: '', description: '', subject: '', tags: [] };
+  try {
+    // base64 변환
+    const base64 = await fileToBase64(file);
+    const resp = await fetch(AI_FUNCTION_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({
+        imageBase64: base64,
+        mimeType: file.type,
+        studentInfo: student ? {
+          name: student.name,
+          grade: student.grade,
+          school: student.school,
+          class_name: student.class_name
+        } : null,
+        teacherInfo: teacher ? {
+          name: teacher.name,
+          ai_tone_style: teacher.ai_tone_style,
+          writing_style: teacher.writing_style,
+          sample_comment: teacher.sample_comment
+        } : null
+      })
+    });
+    if (resp.ok) {
+      aiResult = await resp.json();
+    } else {
+      const txt = await resp.text();
+      console.warn('AI 분석 실패:', txt);
+    }
+  } catch (err) {
+    console.error('AI error:', err);
+  }
+
+  // artworks 테이블에 저장 (갤러리 자동 연동)
+  try {
+    const { data: inserted, error } = await db.from('artworks').insert({
+      student_id: studentId,
+      teacher_id: teacherId || null,
+      image_url: imageUrl,
+      title: aiResult.title || null,
+      description: aiResult.description || null,
+      subject: aiResult.subject || null,
+      tags: (aiResult.tags && aiResult.tags.length > 0) ? aiResult.tags : null
+    }).select().single();
+    if (error) throw error;
+
+    // 알림장 블록에 추가
+    noteFormBlocks.push({
+      block_type: 'artwork',
+      artwork_id: inserted.id,
+      order_index: noteFormBlocks.length
+    });
+    // 메모리에도 갤러리 동기화
+    artworks.unshift(inserted);
+    renderNoteFormBlocks();
+    showToast('✓ 작품이 갤러리에 저장되고 알림장에 추가되었습니다');
+  } catch (err) {
+    console.error(err);
+    showToast('저장 실패: ' + (err.message || err));
+  }
+}
+
+// 파일 → base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// 출결 정보 첨부
+function handleAddAttendanceBlock() {
+  const recipientBtn = document.querySelector('.recipient-toggle-btn.active');
+  const recipientType = recipientBtn ? recipientBtn.dataset.rcp : 'student';
+  if (recipientType !== 'student') {
+    showToast('출결 첨부는 1:1 알림장에서만 가능합니다');
+    return;
+  }
+  const studentId = parseInt(document.getElementById('fNoteStudent').value);
+  const student = students.find(s => s.id === studentId);
+  if (!student) { showToast('학생을 선택해주세요'); return; }
+
+  // 오늘 출결 정보 가져오기
+  const today = getTodayKey();
+  const status = attendanceMap[studentId] || pendingChanges[studentId];
+  if (!status) {
+    showToast('오늘 이 학생의 출결 정보가 없습니다');
+    return;
+  }
+  noteFormBlocks.push({
+    block_type: 'attendance',
+    content: {
+      date: today,
+      status: status,
+      student_id: studentId
+    },
+    order_index: noteFormBlocks.length
+  });
+  renderNoteFormBlocks();
+  showToast('✓ 오늘 출결 정보가 추가되었습니다');
+}
+
+// 알림장 저장
+async function saveNote(asDraft) {
+  const saveBtn = document.getElementById('fNoteSave');
+  const recipientBtn = document.querySelector('.recipient-toggle-btn.active');
+  const recipientType = recipientBtn ? recipientBtn.dataset.rcp : 'student';
+  const teacherId = parseInt(document.getElementById('fNoteTeacher').value);
+  const title = document.getElementById('fNoteTitle').value.trim();
+  const body = document.getElementById('fNoteBody').value.trim();
+
+  let studentId = null;
+  let className = null;
+  if (recipientType === 'student') {
+    studentId = parseInt(document.getElementById('fNoteStudent').value);
+  } else {
+    className = document.getElementById('fNoteClass').value;
+  }
+
+  if (!title) { showToast('제목을 입력해주세요'); return; }
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = '저장 중...';
+
+  try {
+    // 토큰 생성 (중복 방지)
+    let shareToken;
+    let attempts = 0;
+    while (attempts < 5) {
+      shareToken = generateShareToken();
+      const { data: existing } = await db.from('notes').select('id').eq('share_token', shareToken).maybeSingle();
+      if (!existing) break;
+      attempts++;
+    }
+
+    const payload = {
+      recipient_type: recipientType,
+      student_id: studentId,
+      class_name: className,
+      teacher_id: teacherId || null,
+      title: title,
+      body: body || null,
+      share_token: shareToken,
+      is_draft: asDraft
+    };
+    const { data: insertedNote, error } = await db.from('notes').insert(payload).select().single();
+    if (error) throw error;
+
+    // 블록들 저장
+    if (noteFormBlocks.length > 0) {
+      const blocksPayload = noteFormBlocks.map((b, idx) => ({
+        note_id: insertedNote.id,
+        block_type: b.block_type,
+        artwork_id: b.artwork_id || null,
+        image_url: b.image_url || null,
+        content: b.content || null,
+        order_index: idx
+      }));
+      const { error: bErr } = await db.from('note_blocks').insert(blocksPayload);
+      if (bErr) throw bErr;
+    }
+
+    showToast(asDraft ? '✓ 임시저장되었습니다' : '✓ 알림장이 저장되었습니다');
+    noteFormBlocks = [];
+    await loadData();
+    renderNotesPage();
+  } catch (err) {
+    console.error(err);
+    showToast('저장 실패: ' + (err.message || err));
+    saveBtn.disabled = false;
+    saveBtn.textContent = '저장하고 발송';
+  }
 }
 
 // ============ [출결 페이지] ============
