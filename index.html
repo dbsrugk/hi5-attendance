@@ -153,6 +153,9 @@
   .empty-state { padding: 60px 24px; text-align: center; color: #888; font-size: 13px; line-height: 1.7; }
   .empty-state .big-icon { font-size: 48px; margin-bottom: 16px; }
   .class-header { padding: 8px 24px; background: #fafafa; font-size: 11px; font-weight: 700; color: #c0392b; border-bottom: 1px solid #f0f0f0; }
+  .class-header-with-stats { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .class-header-with-stats .cls-name { color: #c0392b; flex-shrink: 0; }
+  .class-header-with-stats .cls-stats { color: #999; font-weight: 600; font-size: 10px; letter-spacing: 0.2px; text-align: right; }
 
   /* 모달 */
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-start; justify-content: center; z-index: 100; overflow-y: auto; }
@@ -3537,7 +3540,17 @@ async function loadDailyRecords(date) {
         return s.class_name === cls && (status === 'present' || status === 'absent');
       });
       if (clsStudents.length === 0) return; // 이 반에 체크된 학생 없으면 반 헤더도 숨김
-      html += `<div class="class-header">${escapeHtml(cls)}</div>`;
+
+      // 반별 통계
+      const clsPresent = clsStudents.filter(s => recordMap[s.id] === 'present').length;
+      const clsAbsent = clsStudents.filter(s => recordMap[s.id] === 'absent').length;
+      const clsTotal = clsPresent + clsAbsent;
+
+      html += `
+        <div class="class-header class-header-with-stats">
+          <span class="cls-name">${escapeHtml(cls)}</span>
+          <span class="cls-stats">총원 ${clsTotal} · 출석 ${clsPresent} · 결석 ${clsAbsent}</span>
+        </div>`;
       clsStudents.forEach(s => {
         const status = recordMap[s.id];
         const statusHtml = status === 'present'
