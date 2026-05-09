@@ -3428,26 +3428,37 @@ async function loadDailyRecords(date) {
     if (error) throw error;
     const recordMap = {};
     (records || []).forEach(r => { recordMap[r.student_id] = r.status; });
-    let present = 0, absent = 0, none = 0;
+    let present = 0, absent = 0;
     students.forEach(s => {
       const status = recordMap[s.id];
       if (status === 'present') present++;
       else if (status === 'absent') absent++;
-      else none++;
     });
+    const total = present + absent;
     summary.innerHTML = `
+      <div class="summary-card"><div class="summary-num">${total}</div><div class="summary-label">총원</div></div>
       <div class="summary-card"><div class="summary-num green">${present}</div><div class="summary-label">출석</div></div>
-      <div class="summary-card"><div class="summary-num red">${absent}</div><div class="summary-label">결석</div></div>
-      <div class="summary-card"><div class="summary-num gray">${none}</div><div class="summary-label">미체크</div></div>`;
+      <div class="summary-card"><div class="summary-num red">${absent}</div><div class="summary-label">결석</div></div>`;
     if (students.length === 0) { list.innerHTML = '<div class="empty-state">학생이 없습니다.</div>'; return; }
+    if (total === 0) {
+      list.innerHTML = '<div class="empty-state">이 날짜에 출결이 체크된 학생이 없습니다.</div>';
+      return;
+    }
+    // 출석/결석 체크된 학생만 표시
     const classes = [...new Set(students.map(s => s.class_name))];
     let html = '';
     classes.forEach(cls => {
-      const clsStudents = students.filter(s => s.class_name === cls);
+      const clsStudents = students.filter(s => {
+        const status = recordMap[s.id];
+        return s.class_name === cls && (status === 'present' || status === 'absent');
+      });
+      if (clsStudents.length === 0) return; // 이 반에 체크된 학생 없으면 반 헤더도 숨김
       html += `<div class="class-header">${escapeHtml(cls)}</div>`;
       clsStudents.forEach(s => {
         const status = recordMap[s.id];
-        const statusHtml = status === 'present' ? '<span class="record-status present">출석</span>' : status === 'absent' ? '<span class="record-status absent">결석</span>' : '<span class="record-status none">미체크</span>';
+        const statusHtml = status === 'present'
+          ? '<span class="record-status present">출석</span>'
+          : '<span class="record-status absent">결석</span>';
         html += `
           <div class="list-item">
             <div class="avatar" style="width:36px;height:36px;font-size:13px;">${escapeHtml(s.name.charAt(0))}</div>
@@ -3604,7 +3615,10 @@ async function loadMonthlyRecords() {
       return { student: s, present, absent, checked, rate };
     });
 
-    // 일별 매트릭스용 데이터 (엑셀 다운로드용)
+    // 한 번이라도 체크된 학생만 (미체크 학생은 표시 안 함)
+    const activeStats = studentStats.filter(stat => stat.checked > 0);
+
+    // 일별 매트릭스용 데이터 (엑셀 다운로드용 — 전체 학생 그대로 유지)
     const matrixData = filteredStudents.map(s => {
       const row = { student: s, byDate: {} };
       allDates.forEach(date => {
@@ -3624,9 +3638,9 @@ async function loadMonthlyRecords() {
       matrixData,
     };
 
-    // 전체 통계
-    const totalPresent = studentStats.reduce((sum, s) => sum + s.present, 0);
-    const totalAbsent = studentStats.reduce((sum, s) => sum + s.absent, 0);
+    // 전체 통계 (체크된 학생 기반)
+    const totalPresent = activeStats.reduce((sum, s) => sum + s.present, 0);
+    const totalAbsent = activeStats.reduce((sum, s) => sum + s.absent, 0);
     const totalChecked = totalPresent + totalAbsent;
     const overallRate = totalChecked > 0 ? Math.round((totalPresent / totalChecked) * 100) : 0;
 
@@ -3635,43 +3649,48 @@ async function loadMonthlyRecords() {
     const endStr = formatDate(monthlyEndDate);
     const periodLabel = (startStr === endStr) ? startStr : `${startStr} ~ ${endStr}`;
 
-    // 학생별 통계 표 (반별로 그룹)
+    // 학생별 통계 표 (반별로 그룹) — activeStats만
     const studentsByClass = {};
-    studentStats.forEach(stat => {
+    activeStats.forEach(stat => {
       const cls = stat.student.class_name;
       if (!studentsByClass[cls]) studentsByClass[cls] = [];
       studentsByClass[cls].push(stat);
     });
 
-    let tableHtml = `
-      <div class="stats-table">
-        <div class="stats-table-row header">
-          <div>이름</div>
-          <div style="text-align:center;">출석</div>
-          <div style="text-align:center;">결석</div>
-          <div style="text-align:center;">체크</div>
-          <div style="text-align:center;">출석률</div>
-        </div>`;
-
-    Object.keys(studentsByClass).forEach(cls => {
-      tableHtml += `<div class="class-header">${escapeHtml(cls)}</div>`;
-      studentsByClass[cls].forEach(stat => {
-        const rateClass = stat.rate >= 90 ? 'high' : (stat.rate >= 70 ? 'mid' : 'low');
-        const rateDisplay = stat.checked > 0 ? `${stat.rate}%` : '-';
-        tableHtml += `
-          <div class="stats-table-row">
-            <div class="name-cell">
-              ${escapeHtml(stat.student.name)}
-              <div class="meta">${escapeHtml(stat.student.grade || '')}</div>
-            </div>
-            <div class="num-cell green">${stat.present}</div>
-            <div class="num-cell red">${stat.absent}</div>
-            <div class="num-cell gray">${stat.checked}</div>
-            <div class="rate-cell ${rateClass}">${rateDisplay}</div>
+    let tableHtml = '';
+    if (activeStats.length === 0) {
+      tableHtml = '<div class="empty-state">이 기간에 출결이 체크된 학생이 없습니다.</div>';
+    } else {
+      tableHtml = `
+        <div class="stats-table">
+          <div class="stats-table-row header">
+            <div>이름</div>
+            <div style="text-align:center;">출석</div>
+            <div style="text-align:center;">결석</div>
+            <div style="text-align:center;">체크</div>
+            <div style="text-align:center;">출석률</div>
           </div>`;
+
+      Object.keys(studentsByClass).forEach(cls => {
+        tableHtml += `<div class="class-header">${escapeHtml(cls)}</div>`;
+        studentsByClass[cls].forEach(stat => {
+          const rateClass = stat.rate >= 90 ? 'high' : (stat.rate >= 70 ? 'mid' : 'low');
+          const rateDisplay = stat.checked > 0 ? `${stat.rate}%` : '-';
+          tableHtml += `
+            <div class="stats-table-row">
+              <div class="name-cell">
+                ${escapeHtml(stat.student.name)}
+                <div class="meta">${escapeHtml(stat.student.grade || '')}</div>
+              </div>
+              <div class="num-cell green">${stat.present}</div>
+              <div class="num-cell red">${stat.absent}</div>
+              <div class="num-cell gray">${stat.checked}</div>
+              <div class="rate-cell ${rateClass}">${rateDisplay}</div>
+            </div>`;
+        });
       });
-    });
-    tableHtml += '</div>';
+      tableHtml += '</div>';
+    }
 
     monthlyContent.innerHTML = `
       <div class="monthly-summary">
@@ -3679,8 +3698,8 @@ async function loadMonthlyRecords() {
         <div class="monthly-summary-period">${periodLabel}</div>
         <div class="monthly-stats-grid">
           <div class="monthly-stat-card">
-            <div class="monthly-stat-num">${filteredStudents.length}</div>
-            <div class="monthly-stat-label">학생</div>
+            <div class="monthly-stat-num">${activeStats.length}</div>
+            <div class="monthly-stat-label">총원</div>
           </div>
           <div class="monthly-stat-card">
             <div class="monthly-stat-num green">${totalPresent}</div>
