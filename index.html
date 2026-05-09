@@ -194,6 +194,23 @@
   /* 출결기록 (일별 보기용) */
   .record-controls { padding: 16px 24px; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
   .date-input { width: 100%; padding: 10px 12px; border: 1px solid #e8e8e8; border-radius: 6px; font-size: 14px; margin-bottom: 8px; }
+
+  /* 일별 출결 기록 — 날짜 네비게이터 */
+  .date-nav { display: flex; align-items: stretch; gap: 8px; margin-bottom: 4px; }
+  .date-nav-arrow { width: 44px; flex-shrink: 0; background: #fff; border: 1px solid #e8e8e8; border-radius: 8px; color: #666; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .date-nav-arrow:active:not(:disabled) { background: #f5f5f5; transform: scale(0.95); }
+  .date-nav-arrow:hover:not(:disabled) { border-color: #c0392b; color: #c0392b; }
+  .date-nav-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+  .date-nav-display { flex: 1; position: relative; background: #fff; border: 1px solid #e8e8e8; border-radius: 8px; padding: 11px 14px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .date-nav-display:active { background: #fafafa; }
+  .date-nav-display:hover { border-color: #c0392b; }
+  .date-nav-text { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+  .date-nav-text.is-today { color: #c0392b; }
+  .date-nav-cal-icon { font-size: 14px; opacity: 0.5; }
+  .date-nav-display input[type="date"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .date-nav-today-btn { display: block; margin: 0 auto; padding: 6px 14px; background: #fff5f3; border: 1px solid #f0d4cf; border-radius: 14px; color: #c0392b; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; margin-top: 8px; }
+  .date-nav-today-btn:active { transform: scale(0.96); background: #fde8e3; }
+
   .record-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
   .summary-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 6px; padding: 10px; text-align: center; }
   .summary-num { font-size: 18px; font-weight: 900; line-height: 1; }
@@ -3382,6 +3399,25 @@ let monthlyClassFilter = 'all'; // 'all' | 클래스명
 let monthlyStartDate = '';
 let monthlyEndDate = '';
 
+// 일별 보기 — 현재 선택된 날짜 (탭 이동·재진입 시에도 유지)
+let recordSelectedDate = '';
+
+// 'YYYY-MM-DD' 더하기 N일 (음수도 가능)
+function shiftDateKey(dateKey, days) {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + days);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+}
+
+// 'YYYY-MM-DD' → '2026년 5월 10일 (일)'
+function formatDateLong(dateKey) {
+  const [y, m, d] = dateKey.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  const dayNames = ['일','월','화','수','목','금','토'];
+  return `${y}년 ${m}월 ${d}일 (${dayNames[dt.getDay()]})`;
+}
+
 function renderRecordsPage() {
   const content = document.getElementById('content');
   content.innerHTML = `
@@ -3407,16 +3443,64 @@ function renderRecordsPage() {
 // ============ 일별 보기 ============
 function renderDailyRecords() {
   const today = getTodayKey();
+  // 처음 진입이거나 이전 선택값이 비었으면 오늘로
+  if (!recordSelectedDate) recordSelectedDate = today;
+
   document.getElementById('recordsBody').innerHTML = `
     <div class="record-controls">
-      <label class="form-label">날짜 선택</label>
-      <input type="date" class="date-input" id="recordDate" value="${today}" />
+      <div class="date-nav">
+        <button class="date-nav-arrow" id="datePrevBtn" title="하루 전">‹</button>
+        <label class="date-nav-display" title="날짜 선택">
+          <span class="date-nav-text" id="dateNavText"></span>
+          <span class="date-nav-cal-icon">📅</span>
+          <input type="date" id="recordDate" value="${recordSelectedDate}" max="${today}" />
+        </label>
+        <button class="date-nav-arrow" id="dateNextBtn" title="하루 후">›</button>
+      </div>
+      <button class="date-nav-today-btn" id="dateTodayBtn" style="display:none;">↺ 오늘로</button>
       <div class="record-summary" id="recordSummary"></div>
     </div>
     <div id="recordList"><div class="loading"><div class="spinner"></div>불러오는 중...</div></div>`;
-  const dateInput = document.getElementById('recordDate');
-  dateInput.onchange = () => loadDailyRecords(dateInput.value);
-  loadDailyRecords(today);
+
+  // 화살표/날짜 표시 업데이트 + 데이터 로드
+  function applyDate(newDate) {
+    // 미래 차단
+    if (newDate > today) return;
+    recordSelectedDate = newDate;
+    updateDateUI();
+    loadDailyRecords(recordSelectedDate);
+  }
+
+  function updateDateUI() {
+    const isToday = recordSelectedDate === today;
+    const text = document.getElementById('dateNavText');
+    text.textContent = formatDateLong(recordSelectedDate);
+    text.classList.toggle('is-today', isToday);
+    // 다음 날 화살표는 오늘이면 비활성
+    document.getElementById('dateNextBtn').disabled = isToday;
+    // [오늘로] 버튼은 오늘이 아닐 때만
+    document.getElementById('dateTodayBtn').style.display = isToday ? 'none' : 'block';
+    // <input type="date">의 value도 동기화 (사용자가 화살표로 이동했을 때)
+    const dateInput = document.getElementById('recordDate');
+    if (dateInput.value !== recordSelectedDate) dateInput.value = recordSelectedDate;
+  }
+
+  document.getElementById('datePrevBtn').onclick = () => {
+    applyDate(shiftDateKey(recordSelectedDate, -1));
+  };
+  document.getElementById('dateNextBtn').onclick = () => {
+    applyDate(shiftDateKey(recordSelectedDate, 1));
+  };
+  document.getElementById('dateTodayBtn').onclick = () => {
+    applyDate(today);
+  };
+  document.getElementById('recordDate').onchange = (e) => {
+    if (e.target.value) applyDate(e.target.value);
+  };
+
+  // 초기 렌더
+  updateDateUI();
+  loadDailyRecords(recordSelectedDate);
 }
 
 async function loadDailyRecords(date) {
