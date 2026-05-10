@@ -5382,6 +5382,13 @@ function confirmAiAction() {
         targetSchools = [a.school];
       }
       
+      // schoolActivities에 있는데 schools에 누락된 학교도 자동 포함
+      if (a.schoolActivities && typeof a.schoolActivities === 'object') {
+        Object.keys(a.schoolActivities).forEach(sName => {
+          if (!targetSchools.includes(sName)) targetSchools.push(sName);
+        });
+      }
+      
       // 등록 안 된 학교 필터링
       const validSchools = targetSchools.filter(s => schoolDB[s]);
       const invalidSchools = targetSchools.filter(s => !schoolDB[s]);
@@ -5424,13 +5431,70 @@ function confirmAiAction() {
       }
       calendar[a.date].items = Array.from(allItemIds);
       
+      // ⭐ 활동 기록 자동 저장 (수량이 있을 때)
+      const records = loadRecords();
+      const recordedSchools = []; // 활동 기록까지 저장된 학교들
+      
+      if (a.schoolActivities && typeof a.schoolActivities === 'object') {
+        // schoolActivities 모드: 학교별로 다른 수량
+        Object.keys(a.schoolActivities).forEach(sName => {
+          if (!schoolDB[sName]) return;
+          const acts = (a.schoolActivities[sName] || [])
+            .filter(act => act.itemId && act.qty && act.qty > 0)
+            .map(act => ({
+              itemId: act.itemId,
+              qty: act.qty,
+              memo: '',
+              photos: [],
+              staffId: act.staffId || null
+            }));
+          if (acts.length > 0) {
+            const key = `${a.date}|${sName}`;
+            // 기존 기록이 있으면 추가, 없으면 새로
+            if (records[key] && Array.isArray(records[key].activities)) {
+              records[key].activities = records[key].activities.concat(acts);
+            } else {
+              records[key] = { activities: acts };
+            }
+            recordedSchools.push(sName);
+          }
+        });
+      } else if (Array.isArray(a.activities) && a.activities.length > 0) {
+        // activities 모드: 모든 학교에 동일한 수량 (수량이 있을 때만)
+        const acts = a.activities
+          .filter(act => act.itemId && act.qty && act.qty > 0)
+          .map(act => ({
+            itemId: act.itemId,
+            qty: act.qty,
+            memo: '',
+            photos: [],
+            staffId: act.staffId || null
+          }));
+        if (acts.length > 0) {
+          validSchools.forEach(sName => {
+            const key = `${a.date}|${sName}`;
+            if (records[key] && Array.isArray(records[key].activities)) {
+              records[key].activities = records[key].activities.concat(acts);
+            } else {
+              records[key] = { activities: JSON.parse(JSON.stringify(acts)) };
+            }
+            recordedSchools.push(sName);
+          });
+        }
+      }
+      
       saveCalendar(calendar);
+      saveRecords(records);
       renderAll();
       
       // 상세 결과 메시지
       let msg = '';
       if (addedSchools.length > 0) {
         msg += `✅ ${a.date}에 추가됨: ${addedSchools.join(', ')}`;
+      }
+      if (recordedSchools.length > 0) {
+        if (msg) msg += '\n';
+        msg += `📝 활동 기록 저장됨: ${recordedSchools.join(', ')}`;
       }
       if (alreadyExist.length > 0) {
         if (msg) msg += '\n';
@@ -5519,6 +5583,12 @@ function confirmAiAction() {
         } else if (a.school) {
           targetSchools = [a.school];
         }
+        // schoolActivities에 있는 학교도 자동 포함
+        if (a.schoolActivities && typeof a.schoolActivities === 'object') {
+          Object.keys(a.schoolActivities).forEach(sName => {
+            if (!targetSchools.includes(sName)) targetSchools.push(sName);
+          });
+        }
         const validSchools = targetSchools.filter(s => schoolDB[s]);
         const invalidSchools = targetSchools.filter(s => !schoolDB[s]);
         
@@ -5547,12 +5617,66 @@ function confirmAiAction() {
         }
         calendar[a.date].items = Array.from(allItemIds);
         
+        // ⭐ 활동 기록 자동 저장 (수량이 있을 때)
+        const records = loadRecords();
+        const recordedSchools = [];
+        
+        if (a.schoolActivities && typeof a.schoolActivities === 'object') {
+          Object.keys(a.schoolActivities).forEach(sName => {
+            if (!schoolDB[sName]) return;
+            const acts = (a.schoolActivities[sName] || [])
+              .filter(act => act.itemId && act.qty && act.qty > 0)
+              .map(act => ({
+                itemId: act.itemId,
+                qty: act.qty,
+                memo: '',
+                photos: [],
+                staffId: act.staffId || null
+              }));
+            if (acts.length > 0) {
+              const key = `${a.date}|${sName}`;
+              if (records[key] && Array.isArray(records[key].activities)) {
+                records[key].activities = records[key].activities.concat(acts);
+              } else {
+                records[key] = { activities: acts };
+              }
+              recordedSchools.push(sName);
+            }
+          });
+        } else if (Array.isArray(a.activities) && a.activities.length > 0) {
+          const acts = a.activities
+            .filter(act => act.itemId && act.qty && act.qty > 0)
+            .map(act => ({
+              itemId: act.itemId,
+              qty: act.qty,
+              memo: '',
+              photos: [],
+              staffId: act.staffId || null
+            }));
+          if (acts.length > 0) {
+            validSchools.forEach(sName => {
+              const key = `${a.date}|${sName}`;
+              if (records[key] && Array.isArray(records[key].activities)) {
+                records[key].activities = records[key].activities.concat(acts);
+              } else {
+                records[key] = { activities: JSON.parse(JSON.stringify(acts)) };
+              }
+              recordedSchools.push(sName);
+            });
+          }
+        }
+        
         saveCalendar(calendar);
+        saveRecords(records);
         renderAll();
         
         let msg = '';
         if (addedSchools.length > 0) {
           msg += `✅ ${a.date}에 추가됨: ${addedSchools.join(', ')}`;
+        }
+        if (recordedSchools.length > 0) {
+          if (msg) msg += '\n';
+          msg += `📝 활동 기록 저장됨: ${recordedSchools.join(', ')}`;
         }
         if (alreadyExist.length > 0) {
           if (msg) msg += '\n';
