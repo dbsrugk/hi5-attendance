@@ -5188,23 +5188,29 @@ ${schoolList}
 {
   "action": "add_record" | "delete_record" | "add_schedule" | "edit_schedule" | "delete_schedule" | "query" | "unclear",
   "date": "YYYY-MM-DD",
-  "school": "학교명",
-  "activities": [{"itemId": "품목id", "qty": 숫자, "staffId": "담당자id"}],
+  "school": "학교명 (단일 학교 액션일 때)",
+  "schools": ["학교1", "학교2", "학교3"] (여러 학교를 동시에 일정에 추가/제거할 때 사용. add_schedule, edit_schedule, delete_schedule에서 다중 학교 지원),
+  "schoolActivities": {"학교명": [{"itemId": "품목id", "qty": 숫자}]} (학교별로 다른 품목/수량을 지정할 때 사용. 예: 해강초는 노트 300, 해림초는 노트 300, 해강고는 노트 400),
+  "activities": [{"itemId": "품목id", "qty": 숫자, "staffId": "담당자id"}] (단일 학교 또는 모든 학교 공통 품목일 때),
   "message": "사용자에게 보여줄 친근한 한국어 메시지",
-  "details": "사용자에게 미리보기로 보여줄 상세 내용 (마크다운 가능, **로 강조)"
+  "details": "사용자에게 미리보기로 보여줄 상세 내용 (마크다운 가능, **로 강조). 여러 학교가 있으면 각 학교마다 줄바꿈으로 구분해서 명확히 보여주세요"
 }
 
 규칙:
 1. 날짜가 "오늘"이면 ${todayStr}, "어제"면 그 전날, "5/8" 같은 월/일 표기는 ${currentYear}년 기준 YYYY-MM-DD 형식으로 변환 (예: 현재가 ${currentYear}-${String(currentMonth+1).padStart(2,'0')}월이면 "${currentMonth+1}/8" → ${currentYear}-${String(currentMonth+1).padStart(2,'0')}-08). 단순 "8일", "15일"처럼 일자만 있으면 현재 보고있는 ${currentYear}년 ${currentMonth+1}월 기준으로 해석.
-2. 품목/담당자/학교 이름이 등록된 것과 매칭 안 되면 가장 비슷한 것 선택. 없으면 unclear로 응답
-3. 학교명은 등록된 정확한 이름 사용 (예: "해강중학교"는 "해강중"으로)
+2. 품목/담당자/학교 이름이 등록된 것과 매칭 안 되면 가장 비슷한 것 선택. 등록 안 된 학교는 결과에 절대 포함하지 말고, message에 "○○ 학교는 등록되어 있지 않아서 제외했어요" 알림. 매칭 가능한 것이 하나도 없으면 unclear로 응답.
+3. 학교명은 등록된 정확한 이름 사용 (예: "해강중학교"는 "해강중"으로). "래강고"처럼 오타나 미등록 학교는 위 규칙에 따라 비슷한 등록 학교(예: "해강고")로 매칭하거나 제외.
 4. 수량은 숫자만 (예: "200권" → 200)
 5. 활동 기록 삭제 요청이면 action: "delete_record" (예: "어제 해강초 노트 기록 지워줘")
-6. 일정 추가면 action: "add_schedule" + activities는 운영 품목 목록
-7. **일정에서 학교 빼기 / 일정 삭제는 action: "delete_schedule"** (예: "12일 일정에서 해림초 빼줘", "12일에서 해림초 안보이게", "12일 일정 다 삭제해줘"). school 지정 시 해당 학교만, school 없으면 그 날짜 전체 일정 삭제
-8. 일정 수정(학교/품목 추가)이면 action: "edit_schedule"
+6. **일정 추가면 action: "add_schedule"**. 여러 학교가 한 번에 들어가면 schools 배열 사용. 학교마다 품목/수량이 다르면 schoolActivities 객체 사용 (필수). 모든 학교가 공통 품목이면 activities만 사용.
+7. **일정에서 학교 빼기 / 일정 삭제는 action: "delete_schedule"** (예: "12일 일정에서 해림초 빼줘", "12일에서 해림초 안보이게", "12일 일정 다 삭제해줘"). school/schools 지정 시 해당 학교들만, 없으면 그 날짜 전체 일정 삭제
+8. 일정 수정(기존 일정에 학교/품목 추가)이면 action: "edit_schedule". 다중 학교 추가도 schools/schoolActivities 사용 가능.
 9. 통계 질문이면 action: "query" + message에 답변
-10. 애매하면 action: "unclear" + message에 무엇이 부족한지 설명`;
+10. 애매하면 action: "unclear" + message에 무엇이 부족한지 설명
+
+예시:
+- 입력: "5월 7일에 해강초 노트 300부, 해림초 노트 300부, 해강고 노트 400부 추가해줘"
+- 응답: {"action":"add_schedule","date":"2026-05-07","schools":["해강초","해림초","해강고"],"schoolActivities":{"해강초":[{"itemId":"note","qty":300}],"해림초":[{"itemId":"note","qty":300}],"해강고":[{"itemId":"note","qty":400}]},"message":"5월 7일에 3개 학교 일정을 추가할게요","details":"**해강초**: 노트 300부\\n**해림초**: 노트 300부\\n**해강고**: 노트 400부"}`;
   
   const url = 'https://api.groq.com/openai/v1/chat/completions';
   
@@ -5368,80 +5374,198 @@ function confirmAiAction() {
       const wdNames = ['일','월','화','수','목','금','토'];
       const wdFullMap = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
       
+      // 추가할 학교 목록 결정 (schools 배열 우선, 없으면 단일 school)
+      let targetSchools = [];
+      if (Array.isArray(a.schools) && a.schools.length > 0) {
+        targetSchools = a.schools.slice();
+      } else if (a.school) {
+        targetSchools = [a.school];
+      }
+      
+      // 등록 안 된 학교 필터링
+      const validSchools = targetSchools.filter(s => schoolDB[s]);
+      const invalidSchools = targetSchools.filter(s => !schoolDB[s]);
+      
+      // 캘린더에 일정 없으면 생성
       if (!calendar[a.date]) {
         calendar[a.date] = {
           wd: wdNames[d.getDay()],
           wdFull: wdFullMap[d.getDay()],
           cluster: '일정',
-          schools: a.school ? [a.school] : [],
-          items: (a.activities || []).map(x => x.itemId).filter(Boolean),
+          schools: [],
+          items: [],
           staff: [],
           note: ''
         };
-      } else {
-        if (a.school && !calendar[a.date].schools.includes(a.school)) {
-          calendar[a.date].schools.push(a.school);
-        }
-        const newItems = (a.activities || []).map(x => x.itemId).filter(Boolean);
-        calendar[a.date].items = [...new Set([...(calendar[a.date].items || []), ...newItems])];
       }
+      
+      // 학교 추가 (중복 방지)
+      const addedSchools = [];
+      const alreadyExist = [];
+      validSchools.forEach(s => {
+        if (calendar[a.date].schools.includes(s)) {
+          alreadyExist.push(s);
+        } else {
+          calendar[a.date].schools.push(s);
+          addedSchools.push(s);
+        }
+      });
+      
+      // 운영 품목 추가 - schoolActivities 우선, 없으면 activities
+      const allItemIds = new Set(calendar[a.date].items || []);
+      if (a.schoolActivities && typeof a.schoolActivities === 'object') {
+        Object.keys(a.schoolActivities).forEach(sName => {
+          if (!schoolDB[sName]) return;
+          const acts = a.schoolActivities[sName] || [];
+          acts.forEach(act => { if (act.itemId) allItemIds.add(act.itemId); });
+        });
+      } else if (Array.isArray(a.activities)) {
+        a.activities.forEach(act => { if (act.itemId) allItemIds.add(act.itemId); });
+      }
+      calendar[a.date].items = Array.from(allItemIds);
+      
       saveCalendar(calendar);
-      addAiMessage('bot', `✅ ${a.date}에 일정이 추가됐어요!`);
       renderAll();
+      
+      // 상세 결과 메시지
+      let msg = '';
+      if (addedSchools.length > 0) {
+        msg += `✅ ${a.date}에 추가됨: ${addedSchools.join(', ')}`;
+      }
+      if (alreadyExist.length > 0) {
+        if (msg) msg += '\n';
+        msg += `ℹ️ 이미 있던 학교: ${alreadyExist.join(', ')}`;
+      }
+      if (invalidSchools.length > 0) {
+        if (msg) msg += '\n';
+        msg += `⚠️ 등록 안 된 학교 (제외): ${invalidSchools.join(', ')}`;
+      }
+      if (!msg) {
+        msg = `❌ ${a.date}에 추가된 학교가 없어요. 학교명을 확인해주세요.`;
+      }
+      addAiMessage('bot', msg);
     }
     else if (a.action === 'delete_schedule') {
       // 일정 자체를 삭제 (학교 단위 또는 전체 날짜)
       if (!calendar[a.date]) {
         addAiMessage('bot', `❌ ${a.date}에 일정이 없어요.`, 'error');
-      } else if (a.school) {
-        // 특정 학교만 일정에서 빼기
-        const schools = calendar[a.date].schools || [];
-        const idx = schools.indexOf(a.school);
-        if (idx === -1) {
-          addAiMessage('bot', `❌ ${a.date} 일정에 ${a.school}이(가) 없어요.`, 'error');
-        } else {
-          schools.splice(idx, 1);
-          calendar[a.date].schools = schools;
-          // 학교가 0개 남으면 그 날짜 일정 자체 삭제
-          if (schools.length === 0) {
-            delete calendar[a.date];
-            addAiMessage('bot', `✅ ${a.date} 일정에서 ${a.school}을(를) 빼고, 빈 일정도 정리했어요!`);
-          } else {
-            addAiMessage('bot', `✅ ${a.date} 일정에서 ${a.school}을(를) 뺐어요!`);
-          }
-          // 해당 학교의 그 날짜 활동 기록도 삭제 옵션
-          const records = loadRecords();
-          const key = `${a.date}|${a.school}`;
-          if (records[key]) {
-            delete records[key];
-            saveRecords(records);
-          }
+      } else {
+        // 삭제 대상 학교 결정 (schools 배열 우선, 단일 school 다음, 둘 다 없으면 전체 삭제)
+        let targetSchools = [];
+        if (Array.isArray(a.schools) && a.schools.length > 0) {
+          targetSchools = a.schools.slice();
+        } else if (a.school) {
+          targetSchools = [a.school];
+        }
+        
+        if (targetSchools.length === 0) {
+          // 학교 미지정 → 그 날짜 전체 일정 삭제
+          delete calendar[a.date];
           saveCalendar(calendar);
           renderAll();
+          addAiMessage('bot', `✅ ${a.date} 일정 전체를 삭제했어요!`);
+        } else {
+          const removed = [];
+          const notFound = [];
+          const records = loadRecords();
+          
+          targetSchools.forEach(s => {
+            const idx = (calendar[a.date].schools || []).indexOf(s);
+            if (idx === -1) {
+              notFound.push(s);
+            } else {
+              calendar[a.date].schools.splice(idx, 1);
+              removed.push(s);
+              // 활동 기록도 삭제
+              const key = `${a.date}|${s}`;
+              if (records[key]) delete records[key];
+            }
+          });
+          
+          // 학교가 0개 남으면 일정 자체 삭제
+          let cleanedUp = false;
+          if (calendar[a.date].schools.length === 0) {
+            delete calendar[a.date];
+            cleanedUp = true;
+          }
+          
+          saveCalendar(calendar);
+          saveRecords(records);
+          renderAll();
+          
+          let msg = '';
+          if (removed.length > 0) {
+            msg += `✅ ${a.date} 일정에서 제거: ${removed.join(', ')}`;
+            if (cleanedUp) msg += '\n(빈 일정도 정리됨)';
+          }
+          if (notFound.length > 0) {
+            if (msg) msg += '\n';
+            msg += `ℹ️ 일정에 없던 학교: ${notFound.join(', ')}`;
+          }
+          if (!msg) msg = `❌ 처리할 학교가 없어요.`;
+          addAiMessage('bot', msg);
         }
-      } else {
-        // 학교 미지정이면 그 날짜 전체 일정 삭제
-        delete calendar[a.date];
-        saveCalendar(calendar);
-        addAiMessage('bot', `✅ ${a.date} 일정 전체를 삭제했어요!`);
-        renderAll();
       }
     }
     else if (a.action === 'edit_schedule') {
-      // 일정 수정 (학교 추가/제거, 운영품목 추가)
+      // 일정 수정 (학교 추가, 운영품목 추가)
       if (!calendar[a.date]) {
         addAiMessage('bot', `❌ ${a.date}에 일정이 없어요. 먼저 일정 추가가 필요해요.`, 'error');
       } else {
-        if (a.school && !calendar[a.date].schools.includes(a.school)) {
-          calendar[a.date].schools.push(a.school);
+        // 추가할 학교 목록 결정
+        let targetSchools = [];
+        if (Array.isArray(a.schools) && a.schools.length > 0) {
+          targetSchools = a.schools.slice();
+        } else if (a.school) {
+          targetSchools = [a.school];
         }
-        const newItems = (a.activities || []).map(x => x.itemId).filter(Boolean);
-        if (newItems.length > 0) {
-          calendar[a.date].items = [...new Set([...(calendar[a.date].items || []), ...newItems])];
+        const validSchools = targetSchools.filter(s => schoolDB[s]);
+        const invalidSchools = targetSchools.filter(s => !schoolDB[s]);
+        
+        const addedSchools = [];
+        const alreadyExist = [];
+        validSchools.forEach(s => {
+          if (calendar[a.date].schools.includes(s)) {
+            alreadyExist.push(s);
+          } else {
+            calendar[a.date].schools.push(s);
+            addedSchools.push(s);
+          }
+        });
+        
+        // 품목 추가
+        const allItemIds = new Set(calendar[a.date].items || []);
+        if (a.schoolActivities && typeof a.schoolActivities === 'object') {
+          Object.keys(a.schoolActivities).forEach(sName => {
+            if (!schoolDB[sName]) return;
+            (a.schoolActivities[sName] || []).forEach(act => { 
+              if (act.itemId) allItemIds.add(act.itemId); 
+            });
+          });
+        } else if (Array.isArray(a.activities)) {
+          a.activities.forEach(act => { if (act.itemId) allItemIds.add(act.itemId); });
         }
+        calendar[a.date].items = Array.from(allItemIds);
+        
         saveCalendar(calendar);
-        addAiMessage('bot', `✅ ${a.date} 일정을 수정했어요!`);
         renderAll();
+        
+        let msg = '';
+        if (addedSchools.length > 0) {
+          msg += `✅ ${a.date}에 추가됨: ${addedSchools.join(', ')}`;
+        }
+        if (alreadyExist.length > 0) {
+          if (msg) msg += '\n';
+          msg += `ℹ️ 이미 있던 학교: ${alreadyExist.join(', ')}`;
+        }
+        if (invalidSchools.length > 0) {
+          if (msg) msg += '\n';
+          msg += `⚠️ 등록 안 된 학교 (제외): ${invalidSchools.join(', ')}`;
+        }
+        if (!msg) {
+          msg = `✅ ${a.date} 일정 품목을 수정했어요.`;
+        }
+        addAiMessage('bot', msg);
       }
     }
     else {
